@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+option java_multiple_files = false;
+
+option java_package = "com.slg.common.message";
+
+option java_outer_classname = "MSG";
+
+package common;
+
+//通用错误码
+enum ERERROR {
+    SUCCESS=0;
+    PARAMET_ERERROR=1;
+    UNKNOWN_ERERROR = 2;
+    TIMEOUT_ERERROR = 3;
+}
+
+/*下面定义具体的消息内容，MSG枚举中的每个消息ID，如果有消息体，则会对应一个message 定义，如果无消息体则不必要*/
+/*Login_Request 消息ID对应的消息名称为LoginRequest */
+//示例
+message LoginRequest
+{
+    string username = 1;
+    string password = 2;
+}
+//示例
+message LoginResponse
+{
+    fixed32 ttl = 1;
+}
+//示例
+message TestRequest {
+    string data = 1;
+}
+//示例
+message TestResponse {
+    string result = 1;
+}
+//示例
+message FriendRequest
+{
+    int64 userId=1;
+}
+//示例
+message FriendsResponse
+{
+    repeated int64 userIdList=1;
+}
+//示例
+message SendMessageRequest
+{
+    bytes receiver = 1;
+    bytes text = 2;
+}
+//示例
+message FriendNotification
+{
+    bytes name = 1;
+    bool online = 2;
+}
+//示例
+message MessageNotification
+{
+    bytes sender = 1;
+    bytes text = 2;
+    string timestamp = 3;
+}
+//示例
+message WelcomeNotification
+{
+    bytes text = 1;
+}
+
+/*请求消息集合，把所有的 XxxxxRequest消息全部集合在一起，使用起来类似于C语言的联合体，全部使用optional字段，任何时刻根据MSG 的id值，最多只有一个有效性， 从程序的逻辑上去保证，编译器（不管是protoc还是具体语言的编译器都无法保证）*/
+
+//所有的请求的封装
+message Request
+{
+    int32 protocolId = 1;//唯一协议号
+    oneof request_oneof {
+        LoginRequest login = 2;
+        TestRequest test_request = 3;
+        SendMessageRequest send_message = 4;
+    }
+}
+
+/*请求响应，回应Request，把所有的XxxResponse消息集合在一起，当作联合体使用，不过额外多了几个字段用于表示应答的结果*/
+//所有的 响应的封装
+message Response
+{
+    oneof request_oneof {
+        LoginResponse login = 4;
+        TestResponse test_response = 5;
+        FriendsResponse get_friends = 6;
+    }
+}
+
+//错误消息
+message ErrorCode
+{
+    int32 errorCode = 1;//自定义错误码
+    ERERROR error = 2;//通用错误码
+    string message = 3; // 具体的错误信息
+}
+
+/*服务器通知，与Request相同,把所有的XxxxxNotification消息集合在一起当作联合体使用，可选字段*/
+//服务器通知 ,可选字段,
+message Notification
+{
+    FriendNotification friend = 1;
+    MessageNotification msg = 2;
+    WelcomeNotification welcome = 3;
+}
+
+/*顶层消息，最终封装，包含所有的Request，Response，Notification*/
+//消息正文
+message Message
+{
+    Request request = 1;
+    Response response = 2;
+    Notification notification = 3;
+    ErrorCode code = 4;
+}
+
