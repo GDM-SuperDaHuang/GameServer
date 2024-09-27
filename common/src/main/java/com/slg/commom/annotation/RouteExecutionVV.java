@@ -51,82 +51,82 @@ public class RouteExecutionVV {
 //        }
 //    }
 
-    public static void getBeanAndExecute(ChannelHandlerContext ctx, byte[] messageBytes) {
-//        Object handle = HandleMap.get(protocolId);
-//        if (handle != null) {
-//            Method method = MethodMap.get(protocolId);
-//            try {
-//                if (method != null) {
-//                    method.invoke(handle, ctx, request);
-//                    ctx.close();
-//                    return;
+//    public static void getBeanAndExecute(ChannelHandlerContext ctx, byte[] messageBytes) {
+////        Object handle = HandleMap.get(protocolId);
+////        if (handle != null) {
+////            Method method = MethodMap.get(protocolId);
+////            try {
+////                if (method != null) {
+////                    method.invoke(handle, ctx, request);
+////                    ctx.close();
+////                    return;
+////                }
+////            } catch (Exception e) {
+////                e.printStackTrace();
+////            }
+////        }
+//
+//        Reflections reflections = new Reflections(new ConfigurationBuilder()
+//                .setUrls(ClasspathHelper.forPackage(HANDLERPATH))
+//                .setScanners(new SubTypesScanner(false)));
+//
+//        boolean flag = false;
+//        Set<Class<? extends RouteServer>> classes = reflections.getSubTypesOf(RouteServer.class);
+//        for (Class<?> clazz : classes) {
+//            if (clazz.isAnnotationPresent(ToServer.class)) {
+//                Object bean = BeanTool.getBean(clazz);
+//                // 查找并调用方法
+//                Method[] methods = clazz.getDeclaredMethods();
+//                for (Method method : methods) {
+//                    if (method.isAnnotationPresent(ToMethod.class)) {
+//                        ToMethod annotation = method.getAnnotation(ToMethod.class);
+//
+//                        //--todo
+//                        if (annotation.value() != protocolId) {
+//                            continue;
+//                        }
+//                        // 获取方法的所有参数类型
+//                        Class<?>[] parameterTypes = method.getParameterTypes();
+//                        //获取第二个参数，加载Protobuf类
+//                        Class<?> parameterType = parameterTypes[1];
+//                        // 获取parseFrom方法
+//                        Method parseFromMethod = clazz.getMethod("parseFrom", ByteString.class);
+//                        //todo
+//                        // 使用ByteString封装数据
+//                        ByteString byteString = ByteString.copyFrom(messageBytes);
+//
+//                        // 调用parseFrom方法
+//                        Object invoke = parseFromMethod.invoke(null, byteString);
+//
+//
+//
+//
+//
+//
+//                        try {
+//                            flag = true;
+//                            method.setAccessible(true);
+////                            MSG.Request.RequestOneofCase requestOneofCase = request.getRequestOneofCase();
+////                            Class<MSG.Request.RequestOneofCase> enumClass = MSG.Request.RequestOneofCase.class;
+////                            Object enumc = BeanTool.getBean(enumClass);
+//                            method.invoke(bean, ctx, object);
+//                            HandleMap.put(protocolId, bean);
+//                            MethodMap.put(protocolId, method);
+//                            ctx.close();
+//                            return;
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
 //                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
 //            }
 //        }
-
-        Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(HANDLERPATH))
-                .setScanners(new SubTypesScanner(false)));
-
-        boolean flag = false;
-        Set<Class<? extends RouteServer>> classes = reflections.getSubTypesOf(RouteServer.class);
-        for (Class<?> clazz : classes) {
-            if (clazz.isAnnotationPresent(ToServer.class)) {
-                Object bean = BeanTool.getBean(clazz);
-                // 查找并调用方法
-                Method[] methods = clazz.getDeclaredMethods();
-                for (Method method : methods) {
-                    if (method.isAnnotationPresent(ToMethod.class)) {
-                        ToMethod annotation = method.getAnnotation(ToMethod.class);
-
-                        //--todo
-                        if (annotation.value() != protocolId) {
-                            continue;
-                        }
-                        // 获取方法的所有参数类型
-                        Class<?>[] parameterTypes = method.getParameterTypes();
-                        //获取第二个参数，加载Protobuf类
-                        Class<?> parameterType = parameterTypes[1];
-                        // 获取parseFrom方法
-                        Method parseFromMethod = clazz.getMethod("parseFrom", ByteString.class);
-                        //todo
-                        // 使用ByteString封装数据
-                        ByteString byteString = ByteString.copyFrom(messageBytes);
-
-                        // 调用parseFrom方法
-                        Object invoke = parseFromMethod.invoke(null, byteString);
-
-
-
-
-
-
-                        try {
-                            flag = true;
-                            method.setAccessible(true);
-//                            MSG.Request.RequestOneofCase requestOneofCase = request.getRequestOneofCase();
-//                            Class<MSG.Request.RequestOneofCase> enumClass = MSG.Request.RequestOneofCase.class;
-//                            Object enumc = BeanTool.getBean(enumClass);
-                            method.invoke(bean, ctx, object);
-                            HandleMap.put(protocolId, bean);
-                            MethodMap.put(protocolId, method);
-                            ctx.close();
-                            return;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
-        //释放
-        if (!flag) {
-            ctx.close();
-        }
-    }
-
+//        //释放
+//        if (!flag) {
+//            ctx.close();
+//        }
+//    }
+//
 
 //    public static void getBeanAndExecute(String param, ChannelHandlerContext ctx, GDM.Request request) {
 //        Reflections reflections = new Reflections(new ConfigurationBuilder()

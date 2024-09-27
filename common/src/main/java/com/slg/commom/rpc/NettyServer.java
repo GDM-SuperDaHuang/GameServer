@@ -23,7 +23,8 @@ public class NettyServer {
     public void start(int port) throws Exception {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
-        MessageCodec MESSAGECODEC = new MessageCodec();
+//        MessageCodec MESSAGECODEC = new MessageCodec();
+        MessageCodecVVV MESSAGECODEC = new MessageCodecVVV();
         LoggingHandler loggingHandler = new LoggingHandler(LogLevel.DEBUG);
         try {
             ServerBootstrap b = new ServerBootstrap();
