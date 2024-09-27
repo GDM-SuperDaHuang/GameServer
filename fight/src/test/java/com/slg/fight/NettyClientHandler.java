@@ -1,6 +1,6 @@
 package com.slg.fight;
 
-import com.slg.common.message.MSG;
+import com.slg.commom.message.MSG;
 import io.grpc.netty.shaded.io.netty.channel.ChannelHandlerContext;
 import io.grpc.netty.shaded.io.netty.channel.SimpleChannelInboundHandler;
 
