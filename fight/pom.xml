@@ -3,14 +3,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.slg</groupId>
+	<groupId>com.slg.module</groupId>
 	<artifactId>fight</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>fight</name>
 	<description>fight</description>
 
 	<parent>
-		<groupId>com.slg</groupId>
+		<groupId>com.slg.module</groupId>
 		<artifactId>gameServer</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
@@ -50,9 +50,9 @@
 <!--		</dependency>-->
 <!--		-->
 		<dependency>
-			<groupId>com.slg</groupId>
+			<groupId>com.slg.module</groupId>
 			<artifactId>common</artifactId>
-			<version>${project.parent.version}</version>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 
@@ -64,13 +64,15 @@
 
 
 
-<!--	<build>-->
-<!--		<plugins>-->
-<!--			<plugin>-->
-<!--				<groupId>org.springframework.boot</groupId>-->
-<!--				<artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--			</plugin>-->
-<!--		</plugins>-->
-<!--	</build>-->
-
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

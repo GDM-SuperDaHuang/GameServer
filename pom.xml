@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.slg</groupId>
+    <groupId>com.slg.module</groupId>
     <artifactId>gameServer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -23,6 +23,9 @@
         <module>common</module>
         <module>fight</module>
         <module>gateway</module>
+        <module>protobufFile</module>
+        <module>entrance</module>
+        <module>demo</module>
     </modules>
 
 
@@ -58,11 +61,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.slg</groupId>
-            <artifactId>protobufFile</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
 
 <!--        <dependency>-->
 <!--            <groupId>com.slg</groupId>-->

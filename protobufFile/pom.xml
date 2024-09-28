@@ -3,15 +3,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.slg</groupId>
+    <groupId>com.slg.module</groupId>
     <artifactId>protobufFile</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+
     <name>protobufFile</name>
     <description>protobufFile</description>
 
 
     <parent>
-        <groupId>com.slg</groupId>
+        <groupId>com.slg.module</groupId>
         <artifactId>gameServer</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
