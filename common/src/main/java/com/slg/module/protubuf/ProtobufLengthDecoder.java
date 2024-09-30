@@ -1,6 +1,8 @@
 package com.slg.module.protubuf;
 
-import io.grpc.netty.shaded.io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+//import io.grpc.netty.shaded.io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 public class ProtobufLengthDecoder extends LengthFieldBasedFrameDecoder {
     public ProtobufLengthDecoder(){

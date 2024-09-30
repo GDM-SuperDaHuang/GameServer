@@ -1,17 +1,24 @@
 package com.slg.module.rpc;
 
-import com.slg.module.protubuf.ProtobufLengthDecoder;
-import io.grpc.netty.shaded.io.netty.bootstrap.ServerBootstrap;
-import io.grpc.netty.shaded.io.netty.channel.*;
-import io.grpc.netty.shaded.io.netty.channel.nio.NioEventLoopGroup;
-import io.grpc.netty.shaded.io.netty.channel.socket.SocketChannel;
-import io.grpc.netty.shaded.io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.grpc.netty.shaded.io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.grpc.netty.shaded.io.netty.handler.logging.LogLevel;
-import io.grpc.netty.shaded.io.netty.handler.logging.LoggingHandler;
-import io.grpc.netty.shaded.io.netty.handler.timeout.IdleState;
-import io.grpc.netty.shaded.io.netty.handler.timeout.IdleStateEvent;
-import io.grpc.netty.shaded.io.netty.handler.timeout.IdleStateHandler;
+//import com.slg.module.protubuf.ProtobufLengthDecoder;
+//import io.grpc.netty.shaded.io.netty.bootstrap.ServerBootstrap;
+//import io.grpc.netty.shaded.io.netty.channel.*;
+//import io.grpc.netty.shaded.io.netty.channel.nio.NioEventLoopGroup;
+//import io.grpc.netty.shaded.io.netty.channel.socket.SocketChannel;
+//import io.grpc.netty.shaded.io.netty.channel.socket.nio.NioServerSocketChannel;
+//import io.grpc.netty.shaded.io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+//import io.grpc.netty.shaded.io.netty.handler.logging.LogLevel;
+//import io.grpc.netty.shaded.io.netty.handler.logging.LoggingHandler;
+//import io.grpc.netty.shaded.io.netty.handler.timeout.IdleState;
+//import io.grpc.netty.shaded.io.netty.handler.timeout.IdleStateEvent;
+//import io.grpc.netty.shaded.io.netty.handler.timeout.IdleStateHandler;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -25,25 +32,18 @@ import java.net.InetSocketAddress;
 public class NettyServer implements CommandLineRunner {
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     EventLoopGroup workerGroup = new NioEventLoopGroup();
-//    @Autowired
-    private final MessageCodec MESSAGECODEC;
-//    @Autowired
-    private final MsgDecode MSGDECODE ;
-
-//    public NettyServer(MsgDecode MSGDECODE) {
-//        this.MSGDECODE = MSGDECODE;
-//    }
-
-    LoggingHandler loggingHandler = new LoggingHandler(LogLevel.DEBUG);
-
+    @Autowired
+    private final MsgDecodeTemp MSGDECODE ;
+    @Autowired
+    private final PbMessageHandler pbMessageHandler;
+    LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
     public void start(int port) throws Exception {
-
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     // 指定Channel
                     .channel(NioServerSocketChannel.class)
-//                    .handler(new LoggingHandler())
+                    .handler(new LoggingHandler())
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     //非延迟，直接发送
                     .childOption(ChannelOption.TCP_NODELAY, true)
@@ -55,27 +55,29 @@ public class NettyServer implements CommandLineRunner {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
-                            p.addLast(loggingHandler);
-                            //心跳 20
-                            p.addLast(new IdleStateHandler(20, 0, 0));
-                            p.addLast(new ChannelDuplexHandler() {
-                                @Override
-                                public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-                                    IdleStateEvent event = (IdleStateEvent) evt;
-                                    if (event.state() == IdleState.READER_IDLE) {
-                                        System.out.println("超时---------------");
-                                    }
-//                                    super.userEventTriggered(ctx, evt);
-                                }
-                            });
+//                            p.addLast(new LengthFieldBasedFrameDecoder(102400, 0xc  , 0x4));
+
+
+//                            p.addLast(loggingHandler);
+//                            //心跳 20
+//                            p.addLast(new IdleStateHandler(20, 0, 0));
+//                            p.addLast(new ChannelDuplexHandler() {
+//                                @Override
+//                                public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+//                                    IdleStateEvent event = (IdleStateEvent) evt;
+//                                    if (event.state() == IdleState.READER_IDLE) {
+//                                        System.out.println("超时---------------");
+//                                    }
+////                                    super.userEventTriggered(ctx, evt);
+//                                }
+//                            });
+
+
                             //添加长度解码器,防止包的不完整
 //                            p.addLast(new ProtobufLengthDecoder());
-                            p.addLast(new LengthFieldBasedFrameDecoder(118030371, 0xc  , 0x4  , 0x0, 0x0));
-                            // 添加ProtoBuf解码器
-//                            p.addLast(MESSAGECODEC);
-                            p.addLast("DECODE",MSGDECODE);
-
-                            p.addLast(new MyServerHandler());
+//                            p.addLast("log",loggingHandler);
+                            p.addLast(new MsgDecode());
+                            p.addLast(pbMessageHandler);
                         }
                     });
             ChannelFuture f = b.bind().sync();

@@ -2,11 +2,14 @@ package com.slg.module.rpc;
 
 import com.slg.module.register.HandleBeanDefinitionRegistryPostProcessor;
 import com.slg.module.util.BeanTool;
-import io.grpc.netty.shaded.io.netty.buffer.ByteBuf;
-import io.grpc.netty.shaded.io.netty.channel.ChannelHandler;
-import io.grpc.netty.shaded.io.netty.channel.ChannelHandlerContext;
-import io.grpc.netty.shaded.io.netty.handler.codec.ByteToMessageDecoder;
-import io.grpc.netty.shaded.io.netty.handler.codec.MessageToByteEncoder;
+//import io.grpc.netty.shaded.io.netty.buffer.ByteBuf;
+//import io.grpc.netty.shaded.io.netty.channel.ChannelHandler;
+//import io.grpc.netty.shaded.io.netty.channel.ChannelHandlerContext;
+//import io.grpc.netty.shaded.io.netty.handler.codec.ByteToMessageDecoder;
+//import io.grpc.netty.shaded.io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToByteEncoder;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;

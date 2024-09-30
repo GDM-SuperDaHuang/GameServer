@@ -1,6 +1,9 @@
 package com.slg.module.rpc;
-import io.grpc.netty.shaded.io.netty.channel.ChannelHandlerContext;
-import io.grpc.netty.shaded.io.netty.channel.SimpleChannelInboundHandler;
+//import io.grpc.netty.shaded.io.netty.channel.ChannelHandlerContext;
+//import io.grpc.netty.shaded.io.netty.channel.SimpleChannelInboundHandler;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 public class MyServerHandler extends SimpleChannelInboundHandler<byte[]> {
 

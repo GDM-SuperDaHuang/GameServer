@@ -7,7 +7,9 @@ package com.slg.module.connection;
 
 //import io.grpc.netty.shaded.io.netty.channel.Channel;
 
-import io.grpc.netty.shaded.io.netty.channel.Channel;
+//import io.grpc.netty.shaded.io.netty.channel.Channel;
+
+import io.netty.channel.Channel;
 
 // 假设的BackendConnection类
 class BackendConnection {

@@ -19,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class HandleBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor {
 
+
+    private static  HandleBeanDefinitionRegistryPostProcessor postProcessor ;
     //pd对象
     private final Map<Integer, Class<?>> classMap = new ConcurrentHashMap<>();
     //pb序列化方法
