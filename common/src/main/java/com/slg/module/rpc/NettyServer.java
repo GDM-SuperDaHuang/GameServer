@@ -65,10 +65,10 @@ public class NettyServer implements CommandLineRunner {
                             //添加长度解码器,防止包的不完整
 //                            p.addLast(new ProtobufLengthDecoder());
                             //日志
-                            p.addLast("log",loggingHandler);
+//                            p.addLast("log",loggingHandler);
                             p.addLast(new MsgDecode());
                             p.addLast(pbMessageHandler);
-                            System.out.println("客户端连接成功");
+//                            System.out.println("客户端连接成功");
                         }
                     })
 //                    .childHandler(new LoggingHandler())

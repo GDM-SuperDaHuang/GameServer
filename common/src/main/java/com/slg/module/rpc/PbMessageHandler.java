@@ -25,13 +25,16 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferMess
     @Override
     protected void channelRead0(ChannelHandlerContext cxt, ByteBufferMessage byteBufferMessage) throws Exception {
         int protocolId = byteBufferMessage.getProtocolId();
+        long sessionId = byteBufferMessage.getSessionId();
+
         Method parse = postProcessor.getParseFromMethod(protocolId);
         if (parse == null) {
             cxt.close();
             return;
         }
         Object msgObject = parse.invoke(null, byteBufferMessage.getByteBuffer());
-        route(cxt, msgObject, protocolId);
+        //todo
+        route(cxt, msgObject, protocolId,sessionId);
     }
 
     //todo
@@ -49,7 +52,7 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferMess
     }
 
 
-    public void route(ChannelHandlerContext ctx, Object message, int protocolId) throws Exception {
+    public void route(ChannelHandlerContext ctx, Object message, int protocolId,long userId) throws Exception {
         Class<?> handleClazz = postProcessor.getHandleMap(protocolId);
         if (handleClazz == null) {
             ctx.close();
@@ -66,6 +69,6 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferMess
             ctx.close();
             return;
         }
-        method.invoke(bean, ctx, message);
+        method.invoke(bean, ctx, message,userId);
     }
 }

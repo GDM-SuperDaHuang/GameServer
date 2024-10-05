@@ -3,19 +3,25 @@ package com.slg.module.message;
 import java.nio.ByteBuffer;
 
 public class ByteBufferMessage {
-    private long sessiomId;
+    private long sessionId;
     private int protocolId;
     private ByteBuffer byteBuffer;
 
     public ByteBufferMessage() {
     }
 
-    public long getSessiomId() {
-        return sessiomId;
+    public ByteBufferMessage(long sessionId, int protocolId, ByteBuffer byteBuffer) {
+        this.sessionId = sessionId;
+        this.protocolId = protocolId;
+        this.byteBuffer = byteBuffer;
     }
 
-    public void setSessiomId(long sessiomId) {
-        this.sessiomId = sessiomId;
+    public long getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(long sessionId) {
+        this.sessionId = sessionId;
     }
 
     public int getProtocolId() {
@@ -31,12 +37,6 @@ public class ByteBufferMessage {
     }
 
     public void setByteBuffer(ByteBuffer byteBuffer) {
-        this.byteBuffer = byteBuffer;
-    }
-
-    public ByteBufferMessage(long sessiomId, int protocolId, ByteBuffer byteBuffer) {
-        this.sessiomId = sessiomId;
-        this.protocolId = protocolId;
         this.byteBuffer = byteBuffer;
     }
 }

@@ -63,9 +63,9 @@ public class SendMsg {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    System.out.println("消息发送成功");
+//                    System.out.println("消息发送成功");
                 } else {
-                    System.out.println("消息发送失败: " + future.cause().getMessage());
+//                    System.out.println("消息发送失败: " + future.cause().getMessage());
                 }
             }
         });
