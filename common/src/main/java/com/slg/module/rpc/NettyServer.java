@@ -1,17 +1,5 @@
 package com.slg.module.rpc;
 
-//import com.slg.module.protubuf.ProtobufLengthDecoder;
-//import io.grpc.netty.shaded.io.netty.bootstrap.ServerBootstrap;
-//import io.grpc.netty.shaded.io.netty.channel.*;
-//import io.grpc.netty.shaded.io.netty.channel.nio.NioEventLoopGroup;
-//import io.grpc.netty.shaded.io.netty.channel.socket.SocketChannel;
-//import io.grpc.netty.shaded.io.netty.channel.socket.nio.NioServerSocketChannel;
-//import io.grpc.netty.shaded.io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-//import io.grpc.netty.shaded.io.netty.handler.logging.LogLevel;
-//import io.grpc.netty.shaded.io.netty.handler.logging.LoggingHandler;
-//import io.grpc.netty.shaded.io.netty.handler.timeout.IdleState;
-//import io.grpc.netty.shaded.io.netty.handler.timeout.IdleStateEvent;
-//import io.grpc.netty.shaded.io.netty.handler.timeout.IdleStateHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -21,6 +9,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -30,10 +19,10 @@ import java.net.InetSocketAddress;
 @Component
 @RequiredArgsConstructor
 public class NettyServer implements CommandLineRunner {
+    @Value("8999")
+    private int port;
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-    EventLoopGroup workerGroup = new NioEventLoopGroup();
-    @Autowired
-    private final MsgDecodeTemp MSGDECODE ;
+    EventLoopGroup workerGroup = new NioEventLoopGroup(30);
     @Autowired
     private final PbMessageHandler pbMessageHandler;
     LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
@@ -43,7 +32,7 @@ public class NettyServer implements CommandLineRunner {
             b.group(bossGroup, workerGroup)
                     // 指定Channel
                     .channel(NioServerSocketChannel.class)
-                    .handler(new LoggingHandler())
+//                    .handler(new LoggingHandler())
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     //非延迟，直接发送
                     .childOption(ChannelOption.TCP_NODELAY, true)
@@ -75,17 +64,23 @@ public class NettyServer implements CommandLineRunner {
 
                             //添加长度解码器,防止包的不完整
 //                            p.addLast(new ProtobufLengthDecoder());
-//                            p.addLast("log",loggingHandler);
+                            //日志
+                            p.addLast("log",loggingHandler);
                             p.addLast(new MsgDecode());
                             p.addLast(pbMessageHandler);
+                            System.out.println("客户端连接成功");
                         }
-                    });
+                    })
+//                    .childHandler(new LoggingHandler())
+            ;
+
             ChannelFuture f = b.bind().sync();
             //zk注册
 //            toRegisterZK(port);
             System.out.println("=====服务器启动成功=====");
             f.channel().closeFuture().sync();
         } finally {
+            System.out.println("----------------------------服务器关闭--------------------------------------------");
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
             // 关闭ZooKeeper客户端
@@ -96,7 +91,7 @@ public class NettyServer implements CommandLineRunner {
     @Async
     @Override
     public void run(String... args) throws Exception {
-        start(8888);
+        start(port);
     }
 
 

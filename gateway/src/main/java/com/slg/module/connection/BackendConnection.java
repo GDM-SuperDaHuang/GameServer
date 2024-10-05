@@ -12,7 +12,7 @@ package com.slg.module.connection;
 import io.netty.channel.Channel;
 
 // 假设的BackendConnection类
-class BackendConnection {
+class BackendConnection {//jvm ， 物理
     private final Channel channel = null;
     // 其他字段和构造器省略
 

@@ -37,9 +37,9 @@ public class BeanTool implements ApplicationContextAware {
     public static <T> T getBean(Class<T> clazz) {
         Map<String, T> beansOfType = applicationContext.getBeansOfType(clazz);
         if (!beansOfType.isEmpty()) {
-            // 返回第一个找到的 bean，基于 Map 的迭代顺序（注意：这个顺序是不确定的）
+            // 返回第一个找到的 bean，基于 Map 的迭代顺序
             return beansOfType.values().iterator().next();
         }
-        return null; // 或者抛出一个更明确的异常，表明没有找到 bean
+        return null;
     }
 }

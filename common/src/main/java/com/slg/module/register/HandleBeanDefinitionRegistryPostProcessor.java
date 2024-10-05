@@ -12,15 +12,13 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class HandleBeanDefinitionRegistryPostProcessor implements BeanDefinitionRegistryPostProcessor {
-
-
-    private static  HandleBeanDefinitionRegistryPostProcessor postProcessor ;
     //pd对象
     private final Map<Integer, Class<?>> classMap = new ConcurrentHashMap<>();
     //pb序列化方法
@@ -31,7 +29,7 @@ public class HandleBeanDefinitionRegistryPostProcessor implements BeanDefinition
 
     //handle目标方法
     private final Map<Integer, Method> methodMap = new ConcurrentHashMap<>();
-    private final String[] basePackages = new String[]{""}; // 替换为你的包名
+    private final String[] basePackages = new String[]{""};
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
@@ -60,8 +58,8 @@ public class HandleBeanDefinitionRegistryPostProcessor implements BeanDefinition
                             handleMap.putIfAbsent(key, clazz);
                             methodMap.put(key,method);
                             try {
-                                // 获取parseFrom方法
-                                Method parseFromMethod = parameterType.getMethod("parseFrom", byte[].class);
+//                                Method parseFromMethod = parameterType.getMethod("parseFrom", byte[].class);
+                                Method parseFromMethod = parameterType.getMethod("parseFrom", ByteBuffer.class);
                                 parseFromMethodMap.put(key, parseFromMethod);
                             } catch (NoSuchMethodException e) {
                                 throw new RuntimeException(e);
@@ -75,7 +73,6 @@ public class HandleBeanDefinitionRegistryPostProcessor implements BeanDefinition
 
     @Override
     public void postProcessBeanFactory(org.springframework.beans.factory.config.ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        // 这里可以进一步处理beanFactory，但在这个案例中我们主要关注registry
     }
 
     public Method getParseFromMethod (Integer key) {

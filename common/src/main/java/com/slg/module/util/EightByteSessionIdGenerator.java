@@ -13,8 +13,8 @@ public class EightByteSessionIdGenerator {
     }
 
     /**
-     * 生成一个基于时间戳和用户ID的8字节大小的sessionId（这里实际上使用了long类型，但注意我们只使用了部分位）
-     * @param userId 用户ID（假设为int类型）
+     * 生成一个基于时间戳和用户ID的8字节大小的sessionId
+     * @param userId 用户ID
      * @return 生成的sessionId，作为long类型
      */
     public static long generateSessionId(long userId) {
@@ -54,7 +54,6 @@ public class EightByteSessionIdGenerator {
 
             return sessionId;
         } catch (NoSuchAlgorithmException e) {
-            // SHA-256算法通常总是可用的，但这里还是处理一下异常
             throw new RuntimeException("SHA-256算法不可用", e);
         }
     }
