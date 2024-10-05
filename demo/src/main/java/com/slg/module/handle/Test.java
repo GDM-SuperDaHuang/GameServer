@@ -2,7 +2,6 @@ package com.slg.module.handle;
 
 import com.slg.module.annotation.ToMethod;
 import com.slg.module.annotation.ToServer;
-import com.slg.module.excel.ExcelReader;
 import com.slg.module.interfaceT.monitor1.EventPublisher;
 import com.slg.module.message.MSG;
 import com.slg.module.message.SendMsg;
@@ -26,9 +25,6 @@ public class Test {
         this.sendMsg = sendMsg;
     }
 
-    @Autowired
-    private ExcelReader excelReader;
-
     @ToMethod(value = 1)
     public void diy(ChannelHandlerContext ctx, MSG.LoginRequest request) throws IOException {
         sum++;
@@ -36,7 +32,6 @@ public class Test {
         logger.info("info request:{}",request);
         logger.warn("warn request:{}",request);
         logger.error("error request:{}",request);
-        excelReader.readExcelAndSaveToRedis("");
         MSG.LoginResponse.Builder builder = MSG.LoginResponse.newBuilder();
         byte[] byteArray = MSG.LoginResponse.newBuilder()
                 .setAaa(1111111111)
