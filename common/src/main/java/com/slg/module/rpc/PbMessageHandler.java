@@ -37,23 +37,13 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferMess
     //todo
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (cause instanceof IOException) {
-//            System.err.println("An I/O error has occurred, closing channel.");
-        }else if (cause instanceof InvocationTargetException){
-           //目标方法错误
-        } else if (cause instanceof SocketException){
-//            System.err.println("An I/O error has occurred, closing channel.");
+        if (cause instanceof InvocationTargetException) {
+            //目标方法错误
+        } else if (cause instanceof SocketException
+                || cause instanceof DecoderException) {
             //客户端关闭连接/连接错误
             // 关闭连接
             ctx.close();
-        } else if (cause instanceof DecoderException){
-
-        }
-        // 处理在 channelRead0 或其他方法中抛出的异常
-        if (cause instanceof DecoderException) {
-            System.err.println("Decoder error: " + cause.getMessage());
-        } else {
-            cause.printStackTrace();
         }
 
     }
