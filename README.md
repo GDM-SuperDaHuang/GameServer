@@ -1,7 +1,12 @@
-# -
-游戏服务器框架 gameServer
+# 游戏服务器框架 gameServer
+    JDK17
+    apache-maven-3.9.5
+    脚本工具:protoc-28.2-win64  https://github.com/protocolbuffers/protobuf/releases
 
-模块：
+## 启动方式 
+    先在protobufFilem目录下执行脚本toJava.bat,然后对所有模块maven进行clean，install成功即可
+
+# 模块：
 # [common](common)
     摘要 公共模块，底层核心模块，以及工具类的开发，开发待续.....
 ## 注解 
