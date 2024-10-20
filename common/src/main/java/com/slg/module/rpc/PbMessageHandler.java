@@ -9,8 +9,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.DecoderException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.SocketException;
@@ -19,6 +17,7 @@ import java.net.SocketException;
 @ChannelHandler.Sharable
 public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferMessage> {
 
+
     @Autowired
     private HandleBeanDefinitionRegistryPostProcessor postProcessor;
 
@@ -26,7 +25,6 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferMess
     protected void channelRead0(ChannelHandlerContext cxt, ByteBufferMessage byteBufferMessage) throws Exception {
         int protocolId = byteBufferMessage.getProtocolId();
         long sessionId = byteBufferMessage.getSessionId();
-
         Method parse = postProcessor.getParseFromMethod(protocolId);
         if (parse == null) {
             cxt.close();

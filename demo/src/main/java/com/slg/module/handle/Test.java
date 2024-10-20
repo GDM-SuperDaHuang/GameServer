@@ -44,7 +44,7 @@ public class Test {
                 .setBbb(777777777);
         sendMsg.send(ctx, LoginResponseBuilder);
 
-//        sendMsg.send(ctx, byteArray);
+        sendMsg.send(ctx, byteArray);
 //        publisher.publishCustomEvent(LoginResponseBuilder);
         if (sum > 9003) {
             System.out.println("服务器收到数据sum" + sum);
@@ -68,13 +68,7 @@ public class Test {
 
 
     @ToMethod(value = 2)
-    public void diy(ChannelHandlerContext ctx, MSG.FriendRequest request,long userId) throws IOException {
-        sum++;
-//        logger.debug("debug request:{}",request);
-//        logger.info("info request:{}",request);
-//        logger.warn("warn request:{}",request);
-//        logger.error("error request:{}",request);
-        MSG.LoginResponse.Builder builder = MSG.LoginResponse.newBuilder();
+    public void ffff(ChannelHandlerContext ctx, MSG.FriendRequest request,long userId) throws IOException {
         byte[] byteArray = MSG.LoginResponse.newBuilder()
                 .setAaa(1111111111)
                 .setBbb(2132123132)

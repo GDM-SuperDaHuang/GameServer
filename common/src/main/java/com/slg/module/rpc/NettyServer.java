@@ -44,10 +44,6 @@ public class NettyServer implements CommandLineRunner {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
-//                            p.addLast(new LengthFieldBasedFrameDecoder(102400, 0xc  , 0x4));
-
-
-//                            p.addLast(loggingHandler);
 //                            //心跳 20
 //                            p.addLast(new IdleStateHandler(20, 0, 0));
 //                            p.addLast(new ChannelDuplexHandler() {
@@ -61,18 +57,13 @@ public class NettyServer implements CommandLineRunner {
 //                                }
 //                            });
 
-
-                            //添加长度解码器,防止包的不完整
-//                            p.addLast(new ProtobufLengthDecoder());
                             //日志
 //                            p.addLast("log",loggingHandler);
                             p.addLast(new MsgDecode());
                             p.addLast(pbMessageHandler);
 //                            System.out.println("客户端连接成功");
                         }
-                    })
-//                    .childHandler(new LoggingHandler())
-            ;
+                    });
 
             ChannelFuture f = b.bind().sync();
             //zk注册
