@@ -9,14 +9,15 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @Getter
+@RequiredArgsConstructor
 public class GatewayServer implements CommandLineRunner {
     private int gatewayPort;
     private EventLoopGroup bossGroup;
@@ -51,6 +52,8 @@ public class GatewayServer implements CommandLineRunner {
                         ChannelPipeline p = ch.pipeline();
                         p.addLast(new MsgDecode());
                         p.addLast(new GatewayServerHandler());
+                        System.out.println("客户端连接网关成功");
+
                     }
                 });
 
@@ -60,7 +63,11 @@ public class GatewayServer implements CommandLineRunner {
     }
 
     /**
-     * 网关--目标服务器
+     * 网关-->目标服务器
+     * 目标服务器
+     * @param host h
+     * @param port p
+     * @param channelKey 服务器id
      */
     public void connectToDownstreamServer(String host, int port,int channelKey) throws InterruptedException {
         Bootstrap b = new Bootstrap();
@@ -91,8 +98,9 @@ public class GatewayServer implements CommandLineRunner {
         GatewayServer gatewayServer = new GatewayServer(7898);
         gatewayServer.start();
         // 连接到下游服务器
-        gatewayServer.connectToDownstreamServer("127.0.0.1", 8081,1);
-        gatewayServer.connectToDownstreamServer("127.0.0.1", 8082,2);
+        //todo
+        gatewayServer.connectToDownstreamServer("127.0.0.1", 8999,10000000);
+        gatewayServer.connectToDownstreamServer("127.0.0.1", 8082,20000000);
         // 更多下游服务器...
     }
 }

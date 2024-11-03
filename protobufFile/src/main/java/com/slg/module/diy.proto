@@ -14,7 +14,8 @@ enum ERERROR {
     TIMEOUT_ERERROR = 3;
 }
 
-/*下面定义具体的消息内容，MSG枚举中的每个消息ID，如果有消息体，则会对应一个message 定义，如果无消息体则不必要*/
+/*下面定义具体的消息内容，MSG枚举中的每个消息ID，如果有消息体，
+则会对应一个message 定义，如果无消息体则不必要*/
 /*Login_Request 消息ID对应的消息名称为LoginRequest */
 //示例
 message LoginRequest

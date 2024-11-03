@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableAsync
-@ComponentScan(basePackages = {"com.slg.module","com.slg.module.handle"})
+//@ComponentScan(basePackages = {"com.slg.module","com.slg.module.handle"})
 @Slf4j
 public class EntranceApplication {
 	public static void main(String[] args) {

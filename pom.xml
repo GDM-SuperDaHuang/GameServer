@@ -63,6 +63,13 @@
         <!--            <version>0.0.1-SNAPSHOT</version>-->
         <!--        </dependency>-->
 
+        <!-- caffeine -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>3.1.8</version>
+        </dependency>
+
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
@@ -155,6 +162,21 @@
             <artifactId>log4j-core</artifactId>
             <version>2.24.1</version>
         </dependency>
+
+        <!-- jpa-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>3.3.3</version>
+        </dependency>
+
+        <!-- mysql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version>
+        </dependency>
+
 
     </dependencies>
 
