@@ -1,4 +1,4 @@
-package com.slg.module.rpc;
+package com.slg.module.rpc.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
 import java.net.InetSocketAddress;
 
 @Component
@@ -27,6 +26,14 @@ public class NettyServer implements CommandLineRunner {
     private final PbMessageHandler pbMessageHandler;
     LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
     public void start(int port) throws Exception {
+        String str ="";
+        for(int i = 0;i<str.length();i++){
+            char indexStr = str.charAt(i);
+            for(int j = 0;j<str.length();j++){
+                String temp = indexStr + str.charAt(i)+"";
+
+            }
+        }
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)

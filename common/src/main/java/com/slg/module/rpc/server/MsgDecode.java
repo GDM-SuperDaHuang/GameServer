@@ -1,4 +1,4 @@
-package com.slg.module.rpc;
+package com.slg.module.rpc.server;
 
 
 import com.slg.module.message.ByteBufferMessage;
@@ -13,6 +13,8 @@ import java.util.List;
  * 注意确保之前的包完整性
  */
 public class MsgDecode extends ByteToMessageDecoder {
+
+    //入
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         // 确保有足够的字节来读取头部

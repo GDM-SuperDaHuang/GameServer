@@ -1,4 +1,4 @@
-package com.slg.module.rpc;
+package com.slg.module.rpc.server;
 
 import com.slg.module.message.ByteBufferMessage;
 import com.slg.module.register.HandleBeanDefinitionRegistryPostProcessor;
@@ -53,18 +53,18 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferMess
     public void route(ChannelHandlerContext ctx, Object message, int protocolId,long userId) throws Exception {
         Class<?> handleClazz = postProcessor.getHandleMap(protocolId);
         if (handleClazz == null) {
-            ctx.close();
+//            ctx.close();
             return;
         }
         Method method = postProcessor.getMethodMap(protocolId);
         if (method == null) {
-            ctx.close();
+//            ctx.close();
             return;
         }
         method.setAccessible(true);
         Object bean = BeanTool.getBean(handleClazz);
         if (bean == null) {
-            ctx.close();
+//            ctx.close();
             return;
         }
         method.invoke(bean, ctx, message,userId);

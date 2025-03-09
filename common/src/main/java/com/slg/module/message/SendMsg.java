@@ -15,10 +15,10 @@ public class SendMsg {
     public void send(ChannelHandlerContext ctx, byte[] msg) {
         ByteBuf buf = Unpooled.buffer(16);
         //消息头
-        buf.writeLong(1234567L);
-        buf.writeInt(1);
-        buf.writeByte(7);
-        buf.writeByte(9);
+        buf.writeLong(0);
+        buf.writeInt(0);
+        buf.writeByte(0);
+        buf.writeByte(0);
         int length = msg.length;
         buf.writeShort(length);
         buf.writeBytes(msg);
@@ -47,10 +47,10 @@ public class SendMsg {
         byte[] msg = builder.buildPartial().toByteArray();
         ByteBuf buf = Unpooled.buffer(16);
         //消息头
-        buf.writeLong(1234567L);
-        buf.writeInt(1);
-        buf.writeByte(7);
-        buf.writeByte(9);
+        buf.writeLong(0);
+        buf.writeInt(0);
+        buf.writeByte(0);
+        buf.writeByte(0);
         int length = msg.length;
         buf.writeShort(length);
         buf.writeBytes(msg);
