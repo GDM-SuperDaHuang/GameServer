@@ -16,6 +16,7 @@ public class GatewayServerHandler extends SimpleChannelInboundHandler<ByteBuffer
 
     private GatewayServer gatewayServer;
     private ConcurrentHashMap<Integer, Channel> channelMap;
+
     public GatewayServerHandler() {
         this.channelMap = gatewayServer.getChannelMap();
     }
