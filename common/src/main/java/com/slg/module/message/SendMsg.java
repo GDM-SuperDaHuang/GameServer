@@ -46,8 +46,13 @@ public class SendMsg {
     public void send(ChannelHandlerContext ctx, GeneratedMessage.Builder<?> builder) {
         byte[] msg = builder.buildPartial().toByteArray();
         ByteBuf buf = Unpooled.buffer(16);
+
         //消息头
         buf.writeLong(0);
+
+        buf.writeInt(0);
+        buf.writeInt(0);
+
         buf.writeInt(0);
         buf.writeByte(0);
         buf.writeByte(0);

@@ -1,4 +1,4 @@
-package com.slg.module.rpc.server;
+package com.slg.module.rpc.msgDECode;
 
 
 import com.slg.module.message.ByteBufferMessage;
@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
- * 注意确保之前的包完整性
+ * 注意确保之前的包完整性,--入
  */
 public class MsgDecode extends ByteToMessageDecoder {
 
@@ -25,7 +25,9 @@ public class MsgDecode extends ByteToMessageDecoder {
         int readableBytes = in.readableBytes();
 
         // 消息头
-        long sessionId = in.readLong();
+        long userId = in.readLong();
+        int cid = in.readInt();
+        int errorCode = in.readInt();
         int protocolId = in.readInt();
         byte zip = in.readByte();
         byte pbVersion = in.readByte();
@@ -36,11 +38,22 @@ public class MsgDecode extends ByteToMessageDecoder {
             in.readerIndex(in.readerIndex() - 16);
             return;
         }
+        //消息体
         ByteBuf messageBody = in.readBytes(length);
+
+
+        //方式1
         ByteBuffer byteBuffer = messageBody.nioBuffer();
-        ByteBufferMessage byteBufferMessage = new ByteBufferMessage(sessionId, protocolId, byteBuffer);
+        ByteBufferMessage byteBufferMessage = new ByteBufferMessage(userId, cid, errorCode, protocolId, byteBuffer);
         out.add(byteBufferMessage);
         //释放 messageBody 的引用
         messageBody.release();
+
+        //方式二
+//        byte[] array = messageBody.array();
+//        ByteMessage byteBufMessage = new ByteMessage(userId, cid, errorCode, protocolId, array);
+//        out.add(byteBufMessage);
+//        //释放 messageBody 的引用
+//        messageBody.release();
     }
 }

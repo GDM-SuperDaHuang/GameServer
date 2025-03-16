@@ -1,5 +1,6 @@
 package com.slg.module.rpc.server;
 
+import com.slg.module.rpc.msgDECode.MsgDecode;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -18,7 +19,7 @@ import java.net.InetSocketAddress;
 @Component
 @RequiredArgsConstructor
 public class NettyServer implements CommandLineRunner {
-    @Value("8999")
+    @Value("9999")
     private int port;
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     EventLoopGroup workerGroup = new NioEventLoopGroup(30);

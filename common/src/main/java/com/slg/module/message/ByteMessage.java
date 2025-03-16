@@ -2,22 +2,45 @@
 //
 //
 //public class ByteMessage {
-//    private long sessiomId;
+//    private long userId;
+//    private int cid;
+//    private int errorCode;
 //    private int protocolId;
-//    private byte[] data;
+//    private byte[] body;
 //
-//    public ByteMessage(long sessiomId, int protocolId, byte[] data) {
-//        this.sessiomId = sessiomId;
+//    public ByteMessage() {
+//    }
+//
+//    public ByteMessage(long userId, int cid, int errorCode, int protocolId, byte[] body) {
+//        this.userId = userId;
+//        this.cid = cid;
+//        this.errorCode = errorCode;
 //        this.protocolId = protocolId;
-//        this.data = data;
+//        this.body = body;
 //    }
 //
-//    public long getSessiomId() {
-//        return sessiomId;
+//    public long getUserId() {
+//        return userId;
 //    }
 //
-//    public void setSessiomId(long sessiomId) {
-//        this.sessiomId = sessiomId;
+//    public void setUserId(long userId) {
+//        this.userId = userId;
+//    }
+//
+//    public int getCid() {
+//        return cid;
+//    }
+//
+//    public void setCid(int cid) {
+//        this.cid = cid;
+//    }
+//
+//    public int getErrorCode() {
+//        return errorCode;
+//    }
+//
+//    public void setErrorCode(int errorCode) {
+//        this.errorCode = errorCode;
 //    }
 //
 //    public int getProtocolId() {
@@ -28,11 +51,11 @@
 //        this.protocolId = protocolId;
 //    }
 //
-//    public byte[] getData() {
-//        return data;
+//    public byte[] getBody() {
+//        return body;
 //    }
 //
-//    public void setData(byte[] data) {
-//        this.data = data;
+//    public void setBody(byte[] body) {
+//        this.body = body;
 //    }
 //}

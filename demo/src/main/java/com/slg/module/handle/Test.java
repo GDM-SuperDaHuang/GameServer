@@ -3,6 +3,7 @@ package com.slg.module.handle;
 import com.slg.module.annotation.ToMethod;
 import com.slg.module.annotation.ToServer;
 import com.slg.module.interfaceT.monitor1.EventPublisher;
+import com.slg.module.message.ByteBufferMessage;
 import com.slg.module.message.MSG;
 import com.slg.module.message.SendMsg;
 import com.slg.module.rpc.client.NettyClient;
@@ -30,46 +31,19 @@ public class Test {
     }
 
     @ToMethod(value = 1)
-    public void diy(ChannelHandlerContext ctx, MSG.LoginRequest request,long userId) throws IOException, InterruptedException {
+    public ByteBufferMessage diy(ChannelHandlerContext ctx, MSG.LoginRequest request, long userId) throws IOException, InterruptedException {
         sum++;
-        logger.debug("debug request:{}",request);
-        logger.info("info request:{}",request);
-        logger.warn("warn request:{}",request);
-        logger.error("error request:{}",request);
-        byte[] byteArray = MSG.LoginResponse.newBuilder()
-                .setAaa(1111111111)
-                .setBbb(2132123132)
-                .buildPartial()
-                .toByteArray();
 
         MSG.LoginResponse.Builder LoginResponseBuilder = MSG.LoginResponse.newBuilder()
                 .setAaa(999999999)
                 .setBbb(777777777);
+        LoginResponseBuilder.
         sendMsg.send(ctx, LoginResponseBuilder);
 
-        sendMsg.send(ctx, byteArray);
-        MSG.FriendRequest.Builder builder = MSG.FriendRequest.newBuilder()
-                .setUserId(111222333L);
-        client.sentMsg(2,builder);
+//        MSG.FriendRequest.Builder builder = MSG.FriendRequest.newBuilder()
+//                .setUserId(111222333L);
+//        client.sentMsg(2,builder);
 //        publisher.publishCustomEvent(LoginResponseBuilder);
-        if (sum > 9003) {
-            System.out.println("服务器收到数据sum" + sum);
-        }
-        if (sum == 70000) {
-            System.out.println("服务器收到数据sum" + sum);
-        }
-        if (sum == 80000) {
-            System.out.println("服务器收到数据sum" + sum);
-        }
-        if (sum == 85000) {
-            System.out.println("服务器收到数据sum" + sum);
-        }
-        if (sum == 90000) {
-            System.out.println("服务器收到数据sum" + sum);
-        }
-        if (sum >= 99900) {
-            System.out.println("服务器收到数据sum" + sum);
-        }
     }
 
 
@@ -80,6 +54,11 @@ public class Test {
                 .setBbb(2132123132)
                 .buildPartial()
                 .toByteArray();
+
+
+        MSG.LoginResponse.Builder builder = MSG.LoginResponse.newBuilder()
+                .setAaa(1111111111)
+                .setBbb(2132123132);
 
         MSG.LoginResponse.Builder LoginResponseBuilder = MSG.LoginResponse.newBuilder()
                 .setAaa(999999999)
