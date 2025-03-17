@@ -3,7 +3,7 @@ package com.slg.module.handle;
 import com.slg.module.annotation.ToMethod;
 import com.slg.module.annotation.ToServer;
 import com.slg.module.interfaceT.monitor1.EventPublisher;
-import com.slg.module.message.ByteBufferMessage;
+import com.slg.module.message.ByteMessage;
 import com.slg.module.message.MSG;
 import com.slg.module.message.SendMsg;
 import com.slg.module.rpc.client.NettyClient;
@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 
 @Component
@@ -25,30 +26,35 @@ public class Test {
 
     @Autowired
     EventPublisher publisher;
+
     public Test(SendMsg sendMsg) {
         this.sendMsg = sendMsg;
         this.client = client;
     }
 
     @ToMethod(value = 1)
-    public ByteBufferMessage diy(ChannelHandlerContext ctx, MSG.LoginRequest request, long userId) throws IOException, InterruptedException {
+    public ByteMessage diy(ChannelHandlerContext ctx, MSG.LoginRequest request, long userId) throws IOException, InterruptedException {
         sum++;
 
-        MSG.LoginResponse.Builder LoginResponseBuilder = MSG.LoginResponse.newBuilder()
+        byte[] LoginResponseByte = MSG.LoginResponse.newBuilder()
                 .setAaa(999999999)
-                .setBbb(777777777);
-        LoginResponseBuilder.
-        sendMsg.send(ctx, LoginResponseBuilder);
+                .setBbb(777777777)
+                .buildPartial()
+                .toByteArray();
+
+//        sendMsg.send(ctx, LoginResponseBuilder);
 
 //        MSG.FriendRequest.Builder builder = MSG.FriendRequest.newBuilder()
 //                .setUserId(111222333L);
 //        client.sentMsg(2,builder);
 //        publisher.publishCustomEvent(LoginResponseBuilder);
+        ByteMessage byteMessage = new ByteMessage(0,LoginResponseByte);
+        return byteMessage;
     }
 
 
     @ToMethod(value = 2)
-    public void ffff(ChannelHandlerContext ctx, MSG.FriendRequest request,long userId) throws IOException {
+    public void ffff(ChannelHandlerContext ctx, MSG.FriendRequest request, long userId) throws IOException {
         byte[] byteArray = MSG.LoginResponse.newBuilder()
                 .setAaa(1111111111)
                 .setBbb(2132123132)
