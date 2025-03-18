@@ -1,6 +1,6 @@
 package com.slg.module.rpc.client;
 
-import com.slg.module.message.ByteMessage;
+import com.slg.module.message.MsgResponse;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -14,7 +14,7 @@ import java.net.SocketException;
  */
 @Component
 @ChannelHandler.Sharable
-public class DownstreamServerHandler extends SimpleChannelInboundHandler<ByteMessage> {
+public class DownstreamServerHandler extends SimpleChannelInboundHandler<MsgResponse> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
@@ -22,7 +22,7 @@ public class DownstreamServerHandler extends SimpleChannelInboundHandler<ByteMes
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext cxt, ByteMessage byteBufferMessage) throws Exception {
+    protected void channelRead0(ChannelHandlerContext cxt, MsgResponse msg) throws Exception {
 //        int protocolId = byteBufferMessage.getProtocolId();
 //        long sessionId = byteBufferMessage.getSessionId();
 //        Method parse = postProcessor.getParseFromMethod(protocolId);
