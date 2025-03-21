@@ -7,13 +7,15 @@ public class ByteBufferMessage {
     private int cid;
     private int errorCode;
     private int protocolId;
-    private ByteBuffer body;
+    //    private ByteBuffer body;
+    private byte[] body;//消息体
+
 
     public ByteBufferMessage() {
 
     }
 
-    public ByteBufferMessage(long userId, int cid, int errorCode, int protocolId, ByteBuffer body) {
+    public ByteBufferMessage(long userId, int cid, int errorCode, int protocolId, byte[] body) {
         this.userId = userId;
         this.cid = cid;
         this.errorCode = errorCode;
@@ -53,11 +55,11 @@ public class ByteBufferMessage {
         this.protocolId = protocolId;
     }
 
-    public ByteBuffer getBody() {
+    public byte[] getBody() {
         return body;
     }
 
-    public void setBody(ByteBuffer body) {
+    public void setBody(byte[] body) {
         this.body = body;
     }
 }

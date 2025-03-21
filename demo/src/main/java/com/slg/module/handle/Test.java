@@ -2,13 +2,11 @@ package com.slg.module.handle;
 
 import com.slg.module.annotation.ToMethod;
 import com.slg.module.annotation.ToServer;
-import com.slg.module.interfaceT.monitor1.EventPublisher;
 import com.slg.module.message.MSG;
 import com.slg.module.message.MsgResponse;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -18,10 +16,6 @@ import java.util.ArrayList;
 @ToServer
 public class Test {
     private static final Logger logger = LogManager.getLogger(Test.class);
-
-    @Autowired
-    EventPublisher publisher;
-
 
     @ToMethod(value = 1)
     public MsgResponse diy(ChannelHandlerContext ctx, MSG.LoginRequest request, long userId) throws IOException, InterruptedException {

@@ -39,21 +39,9 @@ public class MsgDecode extends ByteToMessageDecoder {
             return;
         }
         //消息体
-        ByteBuf messageBody = in.readBytes(length);
-
-
-        //方式1
-        ByteBuffer byteBuffer = messageBody.nioBuffer();
-        ByteBufferMessage byteBufferMessage = new ByteBufferMessage(userId, cid, errorCode, protocolId, byteBuffer);
-        out.add(byteBufferMessage);
-        //释放 messageBody 的引用
-        messageBody.release();
-
-        //方式二
-//        byte[] array = messageBody.array();
-//        ByteMessage byteBufMessage = new ByteMessage(userId, cid, errorCode, protocolId, array);
-//        out.add(byteBufMessage);
-//        //释放 messageBody 的引用
-//        messageBody.release();
+        byte[] bytes = new byte[length];
+        in.readBytes(bytes, 0, length);
+        ByteBufferMessage byteBufMessage = new ByteBufferMessage(userId, cid, errorCode, protocolId, bytes);
+        out.add(byteBufMessage);
     }
 }

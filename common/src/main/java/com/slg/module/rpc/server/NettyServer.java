@@ -94,21 +94,4 @@ public class NettyServer implements CommandLineRunner {
         start(port);
     }
 
-
-//    private void toRegisterZK(int port) throws Exception {
-//        // 在ZooKeeper中注册服务
-//        String servicePath = "/services/myapp/" + port;
-//        String serviceData = "Netty Server on port " + port;
-//        if (client.checkExists().forPath(servicePath) == null) {
-//            client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(servicePath, serviceData.getBytes());
-//            System.out.println("Server registered to ZooKeeper at " + servicePath);
-//        } else {
-//            System.out.println("Warning: Node already exists at " + servicePath + ". Overwriting data or ignoring...");
-//            // 更新数据
-//            client.setData().forPath(servicePath, serviceData.getBytes());
-//        }
-//        System.out.println("=====ZK注册成功/更新=====");
-//    }
-
-
 }

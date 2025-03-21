@@ -1,6 +1,7 @@
 package com.slg.module.rpc.client;
 
-import com.slg.module.message.MsgResponse;
+import com.slg.module.message.ByteBufferMessage;
+
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -8,31 +9,33 @@ import io.netty.handler.codec.DecoderException;
 import org.springframework.stereotype.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.net.SocketException;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 处理远程服务器连接
  */
 @Component
 @ChannelHandler.Sharable
-public class DownstreamServerHandler extends SimpleChannelInboundHandler<MsgResponse> {
+public class DownstreamServerHandler extends SimpleChannelInboundHandler<ByteBufferMessage> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         System.out.println("Connected to downstream server " + ctx.channel().remoteAddress());
     }
 
+
     @Override
-    protected void channelRead0(ChannelHandlerContext cxt, MsgResponse msg) throws Exception {
-//        int protocolId = byteBufferMessage.getProtocolId();
-//        long sessionId = byteBufferMessage.getSessionId();
-//        Method parse = postProcessor.getParseFromMethod(protocolId);
-//        if (parse == null) {
-//            cxt.close();
-//            return;
-//        }
-//        Object msgObject = parse.invoke(null, byteBufferMessage.getByteBuffer());
-//        //todo
-//        route(cxt, msgObject, protocolId,sessionId);
+    protected void channelRead0(ChannelHandlerContext cxt, ByteBufferMessage msg) throws Exception {
+        long cid = msg.getCid();
+        int protocolId = msg.getProtocolId();
+        byte[] body = msg.getBody(); // 假设 ByteBufferMessage 有 getBody() 方法
+        // 获取关联的 Future 并完成
+        CompletableFuture<ByteBufferMessage> future = NettyClient.pendingRequests.remove(cid);
+        if (future != null) {
+            future.complete(msg);
+        } else {
+            System.err.println("Received orphan response for CID: " + cid);
+        }
     }
 
     @Override
