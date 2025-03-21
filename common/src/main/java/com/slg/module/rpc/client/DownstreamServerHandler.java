@@ -6,7 +6,9 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.DecoderException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.lang.reflect.InvocationTargetException;
 import java.net.SocketException;
 import java.util.concurrent.CompletableFuture;
@@ -17,6 +19,9 @@ import java.util.concurrent.CompletableFuture;
 @Component
 @ChannelHandler.Sharable
 public class DownstreamServerHandler extends SimpleChannelInboundHandler<ByteBufferMessage> {
+    @Autowired
+    private SentUtil sentUtil;
+
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
@@ -30,8 +35,9 @@ public class DownstreamServerHandler extends SimpleChannelInboundHandler<ByteBuf
         int protocolId = msg.getProtocolId();
         byte[] body = msg.getBody(); // 假设 ByteBufferMessage 有 getBody() 方法
         // 获取关联的 Future 并完成
-        CompletableFuture<ByteBufferMessage> future = NettyClient.pendingRequests.remove(cid);
+        CompletableFuture<ByteBufferMessage> future = sentUtil.getPendingRequests(cid);
         if (future != null) {
+            sentUtil.removeCompletableFutureMap(cid);
             future.complete(msg);
         } else {
             System.err.println("Received orphan response for CID: " + cid);

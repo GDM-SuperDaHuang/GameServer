@@ -1,7 +1,5 @@
 package com.slg.module.message;
 
-import java.nio.ByteBuffer;
-
 public class ByteBufferMessage {
     private long userId;
     private int cid;
