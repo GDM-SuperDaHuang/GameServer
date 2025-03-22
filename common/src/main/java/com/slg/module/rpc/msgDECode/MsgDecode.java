@@ -18,7 +18,7 @@ public class MsgDecode extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         // 确保有足够的字节来读取头部
-        if (in.readableBytes() < 16) {
+        if (in.readableBytes() < 24) {
             return;
         }
         // 缓存 readableBytes 不够则暂时到局部变量
@@ -33,9 +33,9 @@ public class MsgDecode extends ByteToMessageDecoder {
         byte pbVersion = in.readByte();
         short length = in.readShort();
         // 检查是否有足够的字节来读取整个消息体
-        if (readableBytes < 16 + length) {
+        if (readableBytes < 24 + length) {
             // 如果没有，丢弃已经读取的头部信息，并返回
-            in.readerIndex(in.readerIndex() - 16);
+            in.readerIndex(in.readerIndex() - 24);
             return;
         }
         //消息体

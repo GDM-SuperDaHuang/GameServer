@@ -2,11 +2,12 @@ package com.slg.module.rpc.client;
 
 import com.slg.module.message.ByteBufferMessage;
 
+import com.slg.module.util.BeanTool;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.DecoderException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -19,9 +20,6 @@ import java.util.concurrent.CompletableFuture;
 @Component
 @ChannelHandler.Sharable
 public class DownstreamServerHandler extends SimpleChannelInboundHandler<ByteBufferMessage> {
-    @Autowired
-    private SentUtil sentUtil;
-
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
@@ -31,9 +29,10 @@ public class DownstreamServerHandler extends SimpleChannelInboundHandler<ByteBuf
 
     @Override
     protected void channelRead0(ChannelHandlerContext cxt, ByteBufferMessage msg) throws Exception {
-        long cid = msg.getCid();
+        int cid = msg.getCid();
         int protocolId = msg.getProtocolId();
         byte[] body = msg.getBody(); // 假设 ByteBufferMessage 有 getBody() 方法
+        SentUtil sentUtil = BeanTool.getBean(SentUtil.class);
         // 获取关联的 Future 并完成
         CompletableFuture<ByteBufferMessage> future = sentUtil.getPendingRequests(cid);
         if (future != null) {
