@@ -27,11 +27,10 @@
 # [fight](fight)
     战斗服，战斗逻辑，开发待续.....
 
-# [gateway](gateway)
-    网关服，开发待续....
-
 # [protobufFile](protobufFile)
-    存放protobuf文件，diy.proto里面有脚本toJava.bat用作生成java类
+    存放protobuf文件，
+    1，pb文件夹只存放proto文件
+    2，点击脚本toJava.bat,生成java类
 
 # 目前本地测试可以轻松应付 1000线程， 2毫秒连接响应， 2毫秒回响应
 ![img.png](img.png)
