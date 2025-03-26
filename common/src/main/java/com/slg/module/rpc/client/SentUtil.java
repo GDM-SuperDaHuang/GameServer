@@ -63,6 +63,10 @@ public class SentUtil {
 
     public CompletableFuture<ByteBufferMessage> sentMsgAsync(int protocolId, GeneratedMessage.Builder<?> builder) {
         ServerConfig serverConfig = getChannelKey(protocolId);
+        if (serverConfig == null) {
+            return CompletableFuture.failedFuture(new IllegalArgumentException("No server config for protocolId: " + protocolId));
+        }
+
         int serverId = serverConfig.getServerId();
 
         Channel channel = serverChannelMap.get(serverId);
@@ -96,48 +100,6 @@ public class SentUtil {
 
         return future;
     }
-
-
-//    public <T> CompletableFuture<T> sentMsgAsync(
-//            int protocolId,
-//            GeneratedMessage.Builder<?> builder,
-//            Class<T> clazz
-//    ) {
-//        ServerConfig serverConfig = getChannelKey(protocolId);
-//        int serverId = serverConfig.getServerId();
-//
-//        Channel channel = serverChannelMap.get(serverId);
-//        CompletableFuture<T> future = new CompletableFuture<>();
-//
-//        if (channel == null) {
-//            try {
-//                channel = connectToDownStreamServer(serverConfig.getHost(), serverConfig.getPort(), serverId);
-//            } catch (InterruptedException e) {
-//                future.completeExceptionally(e);
-//                return future;
-//            }
-//        }
-//
-//        if (channel == null) {
-//            future.completeExceptionally(new RuntimeException("Channel connection failed"));
-//            return future;
-//        }
-//
-//        int nextCid = UniqueCidGenerator.getNextCid();
-//        pendingRequests.put(nextCid, future); // 直接存储，无需泛型类型
-//        byte[] msg = builder.buildPartial().toByteArray();
-//        ByteBuf out = buildMsg(0, nextCid, 0, protocolId, 0, 3, msg);
-//        channel.writeAndFlush(out).addListener(writeFuture -> {
-//            if (!writeFuture.isSuccess()) {
-//                pendingRequests.remove(nextCid);
-//                future.completeExceptionally(writeFuture.cause());
-//            }
-//        });
-//
-//        return future;
-//    }
-
-
 
 
     // 处理响应的示例方法
