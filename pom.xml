@@ -22,7 +22,6 @@
     <modules>
         <module>core</module>
         <module>fight</module>
-        <module>protobufFile</module>
         <module>entrance</module>
         <module>demo</module>
     </modules>
