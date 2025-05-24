@@ -8,7 +8,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -18,14 +17,13 @@ import java.net.InetSocketAddress;
 
 
 @Component
-@RequiredArgsConstructor
 public class NettyServer implements CommandLineRunner {
-    @Value("9999")
+    @Value("${netty.server.port}")
     private int port;
     EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     EventLoopGroup workerGroup = new NioEventLoopGroup(30);
     @Autowired
-    private final PbMessageHandler pbMessageHandler;
+    private  PbMessageHandler pbMessageHandler;
     LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
     public void start(int port) throws Exception {
         String str ="";

@@ -73,12 +73,7 @@ public class SentUtil {
         CompletableFuture<ByteBufferMessage> future = new CompletableFuture<>();
 
         if (channel == null) {
-            try {
-                channel = connectToDownStreamServer(serverConfig.getHost(), serverConfig.getPort(), serverId);
-            } catch (InterruptedException e) {
-                future.completeExceptionally(e);
-                return future;
-            }
+            channel = connectToDownStreamServer(serverConfig.getHost(), serverConfig.getPort(), serverId);
         }
 
         if (channel == null) {
@@ -89,7 +84,7 @@ public class SentUtil {
         int nextCid = UniqueCidGenerator.getNextCid();
         pendingRequests.put(nextCid, future);
         byte[] msg = builder.buildPartial().toByteArray();
-        System.out.println("=====nextCid:=========" + nextCid);
+//        System.out.println("=====nextCid:=========" + nextCid);
         ByteBuf out = buildMsg(0, nextCid, 0, protocolId, 0, 3, msg);
         channel.writeAndFlush(out).addListener(writeFuture -> {
             if (!writeFuture.isSuccess()) {
@@ -120,8 +115,16 @@ public class SentUtil {
      * @param serverId 服务器标识
      * @throws InterruptedException
      */
-    public Channel connectToDownStreamServer(String host, int port, int serverId) throws InterruptedException {
-        ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
+    public Channel connectToDownStreamServer(String host, int port, int serverId) {
+        //TODO
+        ChannelFuture channelFuture = null;
+        try {
+            channelFuture = bootstrap.connect(host, port).sync();
+        } catch (Exception e) {
+            System.out.println("连接失败，远程调用失败");
+            return null;
+//            throw new RuntimeException(e);
+        }
         if (channelFuture.isSuccess()) {
             Channel downstreamChannel = channelFuture.channel();
             serverChannelMap.put(serverId, downstreamChannel);

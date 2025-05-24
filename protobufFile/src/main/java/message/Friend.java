@@ -3,7 +3,7 @@
 // source: friend.proto
 // Protobuf Java Version: 4.27.2
 
-package friend;
+package message;
 
 public final class Friend {
   private Friend() {}
@@ -30,7 +30,7 @@ public final class Friend {
    * 通用错误码
    * </pre>
    *
-   * Protobuf enum {@code friend.ERERROR}
+   * Protobuf enum {@code ERERROR}
    */
   public enum ERERROR
       implements com.google.protobuf.ProtocolMessageEnum {
@@ -138,7 +138,7 @@ public final class Friend {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return friend.Friend.getDescriptor().getEnumTypes().get(0);
+      return message.Friend.getDescriptor().getEnumTypes().get(0);
     }
 
     private static final ERERROR[] VALUES = values();
@@ -161,11 +161,11 @@ public final class Friend {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:friend.ERERROR)
+    // @@protoc_insertion_point(enum_scope:ERERROR)
   }
 
   public interface TestRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:friend.TestRequest)
+      // @@protoc_insertion_point(interface_extends:TestRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -185,11 +185,11 @@ public final class Friend {
    * 示例
    * </pre>
    *
-   * Protobuf type {@code friend.TestRequest}
+   * Protobuf type {@code TestRequest}
    */
   public static final class TestRequest extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:friend.TestRequest)
+      // @@protoc_insertion_point(message_implements:TestRequest)
       TestRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -211,15 +211,15 @@ public final class Friend {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return friend.Friend.internal_static_friend_TestRequest_descriptor;
+      return message.Friend.internal_static_TestRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return friend.Friend.internal_static_friend_TestRequest_fieldAccessorTable
+      return message.Friend.internal_static_TestRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              friend.Friend.TestRequest.class, friend.Friend.TestRequest.Builder.class);
+              message.Friend.TestRequest.class, message.Friend.TestRequest.Builder.class);
     }
 
     public static final int DATA_FIELD_NUMBER = 1;
@@ -300,10 +300,10 @@ public final class Friend {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof friend.Friend.TestRequest)) {
+      if (!(obj instanceof message.Friend.TestRequest)) {
         return super.equals(obj);
       }
-      friend.Friend.TestRequest other = (friend.Friend.TestRequest) obj;
+      message.Friend.TestRequest other = (message.Friend.TestRequest) obj;
 
       if (!getData()
           .equals(other.getData())) return false;
@@ -325,44 +325,44 @@ public final class Friend {
       return hash;
     }
 
-    public static friend.Friend.TestRequest parseFrom(
+    public static message.Friend.TestRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.TestRequest parseFrom(
+    public static message.Friend.TestRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.TestRequest parseFrom(
+    public static message.Friend.TestRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.TestRequest parseFrom(
+    public static message.Friend.TestRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.TestRequest parseFrom(byte[] data)
+    public static message.Friend.TestRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.TestRequest parseFrom(
+    public static message.Friend.TestRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.TestRequest parseFrom(java.io.InputStream input)
+    public static message.Friend.TestRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static friend.Friend.TestRequest parseFrom(
+    public static message.Friend.TestRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -370,26 +370,26 @@ public final class Friend {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static friend.Friend.TestRequest parseDelimitedFrom(java.io.InputStream input)
+    public static message.Friend.TestRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static friend.Friend.TestRequest parseDelimitedFrom(
+    public static message.Friend.TestRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static friend.Friend.TestRequest parseFrom(
+    public static message.Friend.TestRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static friend.Friend.TestRequest parseFrom(
+    public static message.Friend.TestRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -402,7 +402,7 @@ public final class Friend {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(friend.Friend.TestRequest prototype) {
+    public static Builder newBuilder(message.Friend.TestRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -422,26 +422,26 @@ public final class Friend {
      * 示例
      * </pre>
      *
-     * Protobuf type {@code friend.TestRequest}
+     * Protobuf type {@code TestRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:friend.TestRequest)
-        friend.Friend.TestRequestOrBuilder {
+        // @@protoc_insertion_point(builder_implements:TestRequest)
+        message.Friend.TestRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return friend.Friend.internal_static_friend_TestRequest_descriptor;
+        return message.Friend.internal_static_TestRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return friend.Friend.internal_static_friend_TestRequest_fieldAccessorTable
+        return message.Friend.internal_static_TestRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                friend.Friend.TestRequest.class, friend.Friend.TestRequest.Builder.class);
+                message.Friend.TestRequest.class, message.Friend.TestRequest.Builder.class);
       }
 
-      // Construct using friend.Friend.TestRequest.newBuilder()
+      // Construct using message.Friend.TestRequest.newBuilder()
       private Builder() {
 
       }
@@ -462,17 +462,17 @@ public final class Friend {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return friend.Friend.internal_static_friend_TestRequest_descriptor;
+        return message.Friend.internal_static_TestRequest_descriptor;
       }
 
       @java.lang.Override
-      public friend.Friend.TestRequest getDefaultInstanceForType() {
-        return friend.Friend.TestRequest.getDefaultInstance();
+      public message.Friend.TestRequest getDefaultInstanceForType() {
+        return message.Friend.TestRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public friend.Friend.TestRequest build() {
-        friend.Friend.TestRequest result = buildPartial();
+      public message.Friend.TestRequest build() {
+        message.Friend.TestRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -480,14 +480,14 @@ public final class Friend {
       }
 
       @java.lang.Override
-      public friend.Friend.TestRequest buildPartial() {
-        friend.Friend.TestRequest result = new friend.Friend.TestRequest(this);
+      public message.Friend.TestRequest buildPartial() {
+        message.Friend.TestRequest result = new message.Friend.TestRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(friend.Friend.TestRequest result) {
+      private void buildPartial0(message.Friend.TestRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.data_ = data_;
@@ -496,16 +496,16 @@ public final class Friend {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof friend.Friend.TestRequest) {
-          return mergeFrom((friend.Friend.TestRequest)other);
+        if (other instanceof message.Friend.TestRequest) {
+          return mergeFrom((message.Friend.TestRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(friend.Friend.TestRequest other) {
-        if (other == friend.Friend.TestRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(message.Friend.TestRequest other) {
+        if (other == message.Friend.TestRequest.getDefaultInstance()) return this;
         if (!other.getData().isEmpty()) {
           data_ = other.data_;
           bitField0_ |= 0x00000001;
@@ -631,16 +631,16 @@ public final class Friend {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:friend.TestRequest)
+      // @@protoc_insertion_point(builder_scope:TestRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:friend.TestRequest)
-    private static final friend.Friend.TestRequest DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:TestRequest)
+    private static final message.Friend.TestRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new friend.Friend.TestRequest();
+      DEFAULT_INSTANCE = new message.Friend.TestRequest();
     }
 
-    public static friend.Friend.TestRequest getDefaultInstance() {
+    public static message.Friend.TestRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -676,14 +676,14 @@ public final class Friend {
     }
 
     @java.lang.Override
-    public friend.Friend.TestRequest getDefaultInstanceForType() {
+    public message.Friend.TestRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   public interface TestResponseOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:friend.TestResponse)
+      // @@protoc_insertion_point(interface_extends:TestResponse)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -703,11 +703,11 @@ public final class Friend {
    * 示例
    * </pre>
    *
-   * Protobuf type {@code friend.TestResponse}
+   * Protobuf type {@code TestResponse}
    */
   public static final class TestResponse extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:friend.TestResponse)
+      // @@protoc_insertion_point(message_implements:TestResponse)
       TestResponseOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -729,15 +729,15 @@ public final class Friend {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return friend.Friend.internal_static_friend_TestResponse_descriptor;
+      return message.Friend.internal_static_TestResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return friend.Friend.internal_static_friend_TestResponse_fieldAccessorTable
+      return message.Friend.internal_static_TestResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              friend.Friend.TestResponse.class, friend.Friend.TestResponse.Builder.class);
+              message.Friend.TestResponse.class, message.Friend.TestResponse.Builder.class);
     }
 
     public static final int RESULT_FIELD_NUMBER = 1;
@@ -818,10 +818,10 @@ public final class Friend {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof friend.Friend.TestResponse)) {
+      if (!(obj instanceof message.Friend.TestResponse)) {
         return super.equals(obj);
       }
-      friend.Friend.TestResponse other = (friend.Friend.TestResponse) obj;
+      message.Friend.TestResponse other = (message.Friend.TestResponse) obj;
 
       if (!getResult()
           .equals(other.getResult())) return false;
@@ -843,44 +843,44 @@ public final class Friend {
       return hash;
     }
 
-    public static friend.Friend.TestResponse parseFrom(
+    public static message.Friend.TestResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.TestResponse parseFrom(
+    public static message.Friend.TestResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.TestResponse parseFrom(
+    public static message.Friend.TestResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.TestResponse parseFrom(
+    public static message.Friend.TestResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.TestResponse parseFrom(byte[] data)
+    public static message.Friend.TestResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.TestResponse parseFrom(
+    public static message.Friend.TestResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.TestResponse parseFrom(java.io.InputStream input)
+    public static message.Friend.TestResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static friend.Friend.TestResponse parseFrom(
+    public static message.Friend.TestResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -888,26 +888,26 @@ public final class Friend {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static friend.Friend.TestResponse parseDelimitedFrom(java.io.InputStream input)
+    public static message.Friend.TestResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static friend.Friend.TestResponse parseDelimitedFrom(
+    public static message.Friend.TestResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static friend.Friend.TestResponse parseFrom(
+    public static message.Friend.TestResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static friend.Friend.TestResponse parseFrom(
+    public static message.Friend.TestResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -920,7 +920,7 @@ public final class Friend {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(friend.Friend.TestResponse prototype) {
+    public static Builder newBuilder(message.Friend.TestResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -940,26 +940,26 @@ public final class Friend {
      * 示例
      * </pre>
      *
-     * Protobuf type {@code friend.TestResponse}
+     * Protobuf type {@code TestResponse}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:friend.TestResponse)
-        friend.Friend.TestResponseOrBuilder {
+        // @@protoc_insertion_point(builder_implements:TestResponse)
+        message.Friend.TestResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return friend.Friend.internal_static_friend_TestResponse_descriptor;
+        return message.Friend.internal_static_TestResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return friend.Friend.internal_static_friend_TestResponse_fieldAccessorTable
+        return message.Friend.internal_static_TestResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                friend.Friend.TestResponse.class, friend.Friend.TestResponse.Builder.class);
+                message.Friend.TestResponse.class, message.Friend.TestResponse.Builder.class);
       }
 
-      // Construct using friend.Friend.TestResponse.newBuilder()
+      // Construct using message.Friend.TestResponse.newBuilder()
       private Builder() {
 
       }
@@ -980,17 +980,17 @@ public final class Friend {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return friend.Friend.internal_static_friend_TestResponse_descriptor;
+        return message.Friend.internal_static_TestResponse_descriptor;
       }
 
       @java.lang.Override
-      public friend.Friend.TestResponse getDefaultInstanceForType() {
-        return friend.Friend.TestResponse.getDefaultInstance();
+      public message.Friend.TestResponse getDefaultInstanceForType() {
+        return message.Friend.TestResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public friend.Friend.TestResponse build() {
-        friend.Friend.TestResponse result = buildPartial();
+      public message.Friend.TestResponse build() {
+        message.Friend.TestResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -998,14 +998,14 @@ public final class Friend {
       }
 
       @java.lang.Override
-      public friend.Friend.TestResponse buildPartial() {
-        friend.Friend.TestResponse result = new friend.Friend.TestResponse(this);
+      public message.Friend.TestResponse buildPartial() {
+        message.Friend.TestResponse result = new message.Friend.TestResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(friend.Friend.TestResponse result) {
+      private void buildPartial0(message.Friend.TestResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.result_ = result_;
@@ -1014,16 +1014,16 @@ public final class Friend {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof friend.Friend.TestResponse) {
-          return mergeFrom((friend.Friend.TestResponse)other);
+        if (other instanceof message.Friend.TestResponse) {
+          return mergeFrom((message.Friend.TestResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(friend.Friend.TestResponse other) {
-        if (other == friend.Friend.TestResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(message.Friend.TestResponse other) {
+        if (other == message.Friend.TestResponse.getDefaultInstance()) return this;
         if (!other.getResult().isEmpty()) {
           result_ = other.result_;
           bitField0_ |= 0x00000001;
@@ -1149,16 +1149,16 @@ public final class Friend {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:friend.TestResponse)
+      // @@protoc_insertion_point(builder_scope:TestResponse)
     }
 
-    // @@protoc_insertion_point(class_scope:friend.TestResponse)
-    private static final friend.Friend.TestResponse DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:TestResponse)
+    private static final message.Friend.TestResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new friend.Friend.TestResponse();
+      DEFAULT_INSTANCE = new message.Friend.TestResponse();
     }
 
-    public static friend.Friend.TestResponse getDefaultInstance() {
+    public static message.Friend.TestResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1194,14 +1194,14 @@ public final class Friend {
     }
 
     @java.lang.Override
-    public friend.Friend.TestResponse getDefaultInstanceForType() {
+    public message.Friend.TestResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   public interface FriendRequestOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:friend.FriendRequest)
+      // @@protoc_insertion_point(interface_extends:FriendRequest)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -1215,11 +1215,11 @@ public final class Friend {
    * 示例
    * </pre>
    *
-   * Protobuf type {@code friend.FriendRequest}
+   * Protobuf type {@code FriendRequest}
    */
   public static final class FriendRequest extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:friend.FriendRequest)
+      // @@protoc_insertion_point(message_implements:FriendRequest)
       FriendRequestOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -1240,15 +1240,15 @@ public final class Friend {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return friend.Friend.internal_static_friend_FriendRequest_descriptor;
+      return message.Friend.internal_static_FriendRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return friend.Friend.internal_static_friend_FriendRequest_fieldAccessorTable
+      return message.Friend.internal_static_FriendRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              friend.Friend.FriendRequest.class, friend.Friend.FriendRequest.Builder.class);
+              message.Friend.FriendRequest.class, message.Friend.FriendRequest.Builder.class);
     }
 
     public static final int USERID_FIELD_NUMBER = 1;
@@ -1302,10 +1302,10 @@ public final class Friend {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof friend.Friend.FriendRequest)) {
+      if (!(obj instanceof message.Friend.FriendRequest)) {
         return super.equals(obj);
       }
-      friend.Friend.FriendRequest other = (friend.Friend.FriendRequest) obj;
+      message.Friend.FriendRequest other = (message.Friend.FriendRequest) obj;
 
       if (getUserId()
           != other.getUserId()) return false;
@@ -1328,44 +1328,44 @@ public final class Friend {
       return hash;
     }
 
-    public static friend.Friend.FriendRequest parseFrom(
+    public static message.Friend.FriendRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.FriendRequest parseFrom(
+    public static message.Friend.FriendRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.FriendRequest parseFrom(
+    public static message.Friend.FriendRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.FriendRequest parseFrom(
+    public static message.Friend.FriendRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.FriendRequest parseFrom(byte[] data)
+    public static message.Friend.FriendRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.FriendRequest parseFrom(
+    public static message.Friend.FriendRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.FriendRequest parseFrom(java.io.InputStream input)
+    public static message.Friend.FriendRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static friend.Friend.FriendRequest parseFrom(
+    public static message.Friend.FriendRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1373,26 +1373,26 @@ public final class Friend {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static friend.Friend.FriendRequest parseDelimitedFrom(java.io.InputStream input)
+    public static message.Friend.FriendRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static friend.Friend.FriendRequest parseDelimitedFrom(
+    public static message.Friend.FriendRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static friend.Friend.FriendRequest parseFrom(
+    public static message.Friend.FriendRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static friend.Friend.FriendRequest parseFrom(
+    public static message.Friend.FriendRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1405,7 +1405,7 @@ public final class Friend {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(friend.Friend.FriendRequest prototype) {
+    public static Builder newBuilder(message.Friend.FriendRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1425,26 +1425,26 @@ public final class Friend {
      * 示例
      * </pre>
      *
-     * Protobuf type {@code friend.FriendRequest}
+     * Protobuf type {@code FriendRequest}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:friend.FriendRequest)
-        friend.Friend.FriendRequestOrBuilder {
+        // @@protoc_insertion_point(builder_implements:FriendRequest)
+        message.Friend.FriendRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return friend.Friend.internal_static_friend_FriendRequest_descriptor;
+        return message.Friend.internal_static_FriendRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return friend.Friend.internal_static_friend_FriendRequest_fieldAccessorTable
+        return message.Friend.internal_static_FriendRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                friend.Friend.FriendRequest.class, friend.Friend.FriendRequest.Builder.class);
+                message.Friend.FriendRequest.class, message.Friend.FriendRequest.Builder.class);
       }
 
-      // Construct using friend.Friend.FriendRequest.newBuilder()
+      // Construct using message.Friend.FriendRequest.newBuilder()
       private Builder() {
 
       }
@@ -1465,17 +1465,17 @@ public final class Friend {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return friend.Friend.internal_static_friend_FriendRequest_descriptor;
+        return message.Friend.internal_static_FriendRequest_descriptor;
       }
 
       @java.lang.Override
-      public friend.Friend.FriendRequest getDefaultInstanceForType() {
-        return friend.Friend.FriendRequest.getDefaultInstance();
+      public message.Friend.FriendRequest getDefaultInstanceForType() {
+        return message.Friend.FriendRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public friend.Friend.FriendRequest build() {
-        friend.Friend.FriendRequest result = buildPartial();
+      public message.Friend.FriendRequest build() {
+        message.Friend.FriendRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1483,14 +1483,14 @@ public final class Friend {
       }
 
       @java.lang.Override
-      public friend.Friend.FriendRequest buildPartial() {
-        friend.Friend.FriendRequest result = new friend.Friend.FriendRequest(this);
+      public message.Friend.FriendRequest buildPartial() {
+        message.Friend.FriendRequest result = new message.Friend.FriendRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(friend.Friend.FriendRequest result) {
+      private void buildPartial0(message.Friend.FriendRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.userId_ = userId_;
@@ -1499,16 +1499,16 @@ public final class Friend {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof friend.Friend.FriendRequest) {
-          return mergeFrom((friend.Friend.FriendRequest)other);
+        if (other instanceof message.Friend.FriendRequest) {
+          return mergeFrom((message.Friend.FriendRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(friend.Friend.FriendRequest other) {
-        if (other == friend.Friend.FriendRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(message.Friend.FriendRequest other) {
+        if (other == message.Friend.FriendRequest.getDefaultInstance()) return this;
         if (other.getUserId() != 0L) {
           setUserId(other.getUserId());
         }
@@ -1592,16 +1592,16 @@ public final class Friend {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:friend.FriendRequest)
+      // @@protoc_insertion_point(builder_scope:FriendRequest)
     }
 
-    // @@protoc_insertion_point(class_scope:friend.FriendRequest)
-    private static final friend.Friend.FriendRequest DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:FriendRequest)
+    private static final message.Friend.FriendRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new friend.Friend.FriendRequest();
+      DEFAULT_INSTANCE = new message.Friend.FriendRequest();
     }
 
-    public static friend.Friend.FriendRequest getDefaultInstance() {
+    public static message.Friend.FriendRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1637,14 +1637,14 @@ public final class Friend {
     }
 
     @java.lang.Override
-    public friend.Friend.FriendRequest getDefaultInstanceForType() {
+    public message.Friend.FriendRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   public interface FriendsResponseOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:friend.FriendsResponse)
+      // @@protoc_insertion_point(interface_extends:FriendsResponse)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -1669,11 +1669,11 @@ public final class Friend {
    * 示例
    * </pre>
    *
-   * Protobuf type {@code friend.FriendsResponse}
+   * Protobuf type {@code FriendsResponse}
    */
   public static final class FriendsResponse extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:friend.FriendsResponse)
+      // @@protoc_insertion_point(message_implements:FriendsResponse)
       FriendsResponseOrBuilder {
   private static final long serialVersionUID = 0L;
     static {
@@ -1695,15 +1695,15 @@ public final class Friend {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return friend.Friend.internal_static_friend_FriendsResponse_descriptor;
+      return message.Friend.internal_static_FriendsResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return friend.Friend.internal_static_friend_FriendsResponse_fieldAccessorTable
+      return message.Friend.internal_static_FriendsResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              friend.Friend.FriendsResponse.class, friend.Friend.FriendsResponse.Builder.class);
+              message.Friend.FriendsResponse.class, message.Friend.FriendsResponse.Builder.class);
     }
 
     public static final int USERIDLIST_FIELD_NUMBER = 1;
@@ -1791,10 +1791,10 @@ public final class Friend {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof friend.Friend.FriendsResponse)) {
+      if (!(obj instanceof message.Friend.FriendsResponse)) {
         return super.equals(obj);
       }
-      friend.Friend.FriendsResponse other = (friend.Friend.FriendsResponse) obj;
+      message.Friend.FriendsResponse other = (message.Friend.FriendsResponse) obj;
 
       if (!getUserIdListList()
           .equals(other.getUserIdListList())) return false;
@@ -1818,44 +1818,44 @@ public final class Friend {
       return hash;
     }
 
-    public static friend.Friend.FriendsResponse parseFrom(
+    public static message.Friend.FriendsResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.FriendsResponse parseFrom(
+    public static message.Friend.FriendsResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.FriendsResponse parseFrom(
+    public static message.Friend.FriendsResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.FriendsResponse parseFrom(
+    public static message.Friend.FriendsResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.FriendsResponse parseFrom(byte[] data)
+    public static message.Friend.FriendsResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static friend.Friend.FriendsResponse parseFrom(
+    public static message.Friend.FriendsResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static friend.Friend.FriendsResponse parseFrom(java.io.InputStream input)
+    public static message.Friend.FriendsResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static friend.Friend.FriendsResponse parseFrom(
+    public static message.Friend.FriendsResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1863,26 +1863,26 @@ public final class Friend {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static friend.Friend.FriendsResponse parseDelimitedFrom(java.io.InputStream input)
+    public static message.Friend.FriendsResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static friend.Friend.FriendsResponse parseDelimitedFrom(
+    public static message.Friend.FriendsResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static friend.Friend.FriendsResponse parseFrom(
+    public static message.Friend.FriendsResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static friend.Friend.FriendsResponse parseFrom(
+    public static message.Friend.FriendsResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1895,7 +1895,7 @@ public final class Friend {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(friend.Friend.FriendsResponse prototype) {
+    public static Builder newBuilder(message.Friend.FriendsResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1915,26 +1915,26 @@ public final class Friend {
      * 示例
      * </pre>
      *
-     * Protobuf type {@code friend.FriendsResponse}
+     * Protobuf type {@code FriendsResponse}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:friend.FriendsResponse)
-        friend.Friend.FriendsResponseOrBuilder {
+        // @@protoc_insertion_point(builder_implements:FriendsResponse)
+        message.Friend.FriendsResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return friend.Friend.internal_static_friend_FriendsResponse_descriptor;
+        return message.Friend.internal_static_FriendsResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return friend.Friend.internal_static_friend_FriendsResponse_fieldAccessorTable
+        return message.Friend.internal_static_FriendsResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                friend.Friend.FriendsResponse.class, friend.Friend.FriendsResponse.Builder.class);
+                message.Friend.FriendsResponse.class, message.Friend.FriendsResponse.Builder.class);
       }
 
-      // Construct using friend.Friend.FriendsResponse.newBuilder()
+      // Construct using message.Friend.FriendsResponse.newBuilder()
       private Builder() {
 
       }
@@ -1955,17 +1955,17 @@ public final class Friend {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return friend.Friend.internal_static_friend_FriendsResponse_descriptor;
+        return message.Friend.internal_static_FriendsResponse_descriptor;
       }
 
       @java.lang.Override
-      public friend.Friend.FriendsResponse getDefaultInstanceForType() {
-        return friend.Friend.FriendsResponse.getDefaultInstance();
+      public message.Friend.FriendsResponse getDefaultInstanceForType() {
+        return message.Friend.FriendsResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public friend.Friend.FriendsResponse build() {
-        friend.Friend.FriendsResponse result = buildPartial();
+      public message.Friend.FriendsResponse build() {
+        message.Friend.FriendsResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1973,14 +1973,14 @@ public final class Friend {
       }
 
       @java.lang.Override
-      public friend.Friend.FriendsResponse buildPartial() {
-        friend.Friend.FriendsResponse result = new friend.Friend.FriendsResponse(this);
+      public message.Friend.FriendsResponse buildPartial() {
+        message.Friend.FriendsResponse result = new message.Friend.FriendsResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(friend.Friend.FriendsResponse result) {
+      private void buildPartial0(message.Friend.FriendsResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           userIdList_.makeImmutable();
@@ -1990,16 +1990,16 @@ public final class Friend {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof friend.Friend.FriendsResponse) {
-          return mergeFrom((friend.Friend.FriendsResponse)other);
+        if (other instanceof message.Friend.FriendsResponse) {
+          return mergeFrom((message.Friend.FriendsResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(friend.Friend.FriendsResponse other) {
-        if (other == friend.Friend.FriendsResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(message.Friend.FriendsResponse other) {
+        if (other == message.Friend.FriendsResponse.getDefaultInstance()) return this;
         if (!other.userIdList_.isEmpty()) {
           if (userIdList_.isEmpty()) {
             userIdList_ = other.userIdList_;
@@ -2154,16 +2154,16 @@ public final class Friend {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:friend.FriendsResponse)
+      // @@protoc_insertion_point(builder_scope:FriendsResponse)
     }
 
-    // @@protoc_insertion_point(class_scope:friend.FriendsResponse)
-    private static final friend.Friend.FriendsResponse DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:FriendsResponse)
+    private static final message.Friend.FriendsResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new friend.Friend.FriendsResponse();
+      DEFAULT_INSTANCE = new message.Friend.FriendsResponse();
     }
 
-    public static friend.Friend.FriendsResponse getDefaultInstance() {
+    public static message.Friend.FriendsResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2199,32 +2199,32 @@ public final class Friend {
     }
 
     @java.lang.Override
-    public friend.Friend.FriendsResponse getDefaultInstanceForType() {
+    public message.Friend.FriendsResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_friend_TestRequest_descriptor;
+    internal_static_TestRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_friend_TestRequest_fieldAccessorTable;
+      internal_static_TestRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_friend_TestResponse_descriptor;
+    internal_static_TestResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_friend_TestResponse_fieldAccessorTable;
+      internal_static_TestResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_friend_FriendRequest_descriptor;
+    internal_static_FriendRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_friend_FriendRequest_fieldAccessorTable;
+      internal_static_FriendRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_friend_FriendsResponse_descriptor;
+    internal_static_FriendsResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_friend_FriendsResponse_fieldAccessorTable;
+      internal_static_FriendsResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -2234,41 +2234,41 @@ public final class Friend {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014friend.proto\022\006friend\"\033\n\013TestRequest\022\014\n" +
-      "\004data\030\001 \001(\t\"\036\n\014TestResponse\022\016\n\006result\030\001 " +
-      "\001(\t\"\037\n\rFriendRequest\022\016\n\006userId\030\001 \001(\003\"%\n\017" +
-      "FriendsResponse\022\022\n\nuserIdList\030\001 \003(\003*U\n\007E" +
-      "RERROR\022\013\n\007SUCCESS\020\000\022\023\n\017PARAMET_ERERROR\020\001" +
-      "\022\023\n\017UNKNOWN_ERERROR\020\002\022\023\n\017TIMEOUT_ERERROR" +
-      "\020\003B\nB\006FriendP\000b\006proto3"
+      "\n\014friend.proto\"\033\n\013TestRequest\022\014\n\004data\030\001 " +
+      "\001(\t\"\036\n\014TestResponse\022\016\n\006result\030\001 \001(\t\"\037\n\rF" +
+      "riendRequest\022\016\n\006userId\030\001 \001(\003\"%\n\017FriendsR" +
+      "esponse\022\022\n\nuserIdList\030\001 \003(\003*U\n\007ERERROR\022\013" +
+      "\n\007SUCCESS\020\000\022\023\n\017PARAMET_ERERROR\020\001\022\023\n\017UNKN" +
+      "OWN_ERERROR\020\002\022\023\n\017TIMEOUT_ERERROR\020\003B\t\n\007me" +
+      "ssageb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_friend_TestRequest_descriptor =
+    internal_static_TestRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_friend_TestRequest_fieldAccessorTable = new
+    internal_static_TestRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_friend_TestRequest_descriptor,
+        internal_static_TestRequest_descriptor,
         new java.lang.String[] { "Data", });
-    internal_static_friend_TestResponse_descriptor =
+    internal_static_TestResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_friend_TestResponse_fieldAccessorTable = new
+    internal_static_TestResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_friend_TestResponse_descriptor,
+        internal_static_TestResponse_descriptor,
         new java.lang.String[] { "Result", });
-    internal_static_friend_FriendRequest_descriptor =
+    internal_static_FriendRequest_descriptor =
       getDescriptor().getMessageTypes().get(2);
-    internal_static_friend_FriendRequest_fieldAccessorTable = new
+    internal_static_FriendRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_friend_FriendRequest_descriptor,
+        internal_static_FriendRequest_descriptor,
         new java.lang.String[] { "UserId", });
-    internal_static_friend_FriendsResponse_descriptor =
+    internal_static_FriendsResponse_descriptor =
       getDescriptor().getMessageTypes().get(3);
-    internal_static_friend_FriendsResponse_fieldAccessorTable = new
+    internal_static_FriendsResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_friend_FriendsResponse_descriptor,
+        internal_static_FriendsResponse_descriptor,
         new java.lang.String[] { "UserIdList", });
     descriptor.resolveAllFeaturesImmutable();
   }

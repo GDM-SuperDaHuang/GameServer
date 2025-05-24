@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SendMsg {
-    public void send(ChannelHandlerContext ctx, byte[] msg) {
+    private void send(ChannelHandlerContext ctx, byte[] msg) {
         ByteBuf buf = Unpooled.buffer(16);
         //消息头
         buf.writeLong(0);
@@ -23,43 +23,13 @@ public class SendMsg {
         buf.writeShort(length);
         buf.writeBytes(msg);
         Channel channel = ctx.channel();
-//        if (channel.isActive()){
-//            System.out.println("channel 活跃");
-//        }else {
-//            System.out.println("channel fasle" +channel);
-//        }
         ChannelFuture future = ctx.writeAndFlush(buf);
-//        future.addListener(new ChannelFutureListener() {
-//            @Override
-//            public void operationComplete(ChannelFuture future) throws Exception {
-//                if (future.isSuccess()) {
-//                    System.out.println("消息发送成功");
-//                } else {
-//                    System.out.println("消息发送失败: " + future.cause().getMessage());
-//                }
-//            }
-//        });
-
     }
 
-    //  com.google.protobuf.GeneratedMessage.Builder<Builder>
-    public void send(ChannelHandlerContext ctx, GeneratedMessage.Builder<?> builder) {
-        byte[] msg = builder.buildPartial().toByteArray();
-        ByteBuf buf = Unpooled.buffer(16);
-
-        //消息头
-        buf.writeLong(0);
-
-        buf.writeInt(0);
-        buf.writeInt(0);
-
-        buf.writeInt(0);
-        buf.writeByte(0);
-        buf.writeByte(0);
-        int length = msg.length;
-        buf.writeShort(length);
-        buf.writeBytes(msg);
-        ChannelFuture future = ctx.writeAndFlush(buf);
+    private void send(ChannelHandlerContext ctx,long userId, int protocolId, GeneratedMessage.Builder<?> builder) {
+        byte[] body = builder.buildPartial().toByteArray();
+        ByteBuf out = buildMsg(userId, 0, 0, protocolId, 0, 0, body);
+        ChannelFuture future = ctx.writeAndFlush(out);
         future.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
@@ -71,6 +41,24 @@ public class SendMsg {
             }
         });
 
+    }
+
+    private ByteBuf buildMsg(long userId, int cid, int errorCode, int protocolId, int zip, int version, byte[] bodyArray) {
+        int length = bodyArray.length;
+        //写回
+        ByteBuf out = Unpooled.buffer(24 + length);
+        //消息头
+        out.writeLong(userId);      // 8字节
+        out.writeInt(cid);      // 4字节
+        out.writeInt(errorCode);      // 4字节
+        out.writeInt(protocolId);      // 4字节
+        out.writeByte(zip);                       // zip压缩标志，1字节
+        out.writeByte(version);                       // pb版本，1字节
+        //消息体
+        out.writeShort(bodyArray.length);                 // 消息体长度，2字节
+        // 写入消息体
+        out.writeBytes(bodyArray);
+        return out;
     }
 
 }

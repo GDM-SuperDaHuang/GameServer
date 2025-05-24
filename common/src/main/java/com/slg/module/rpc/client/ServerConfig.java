@@ -3,7 +3,6 @@ package com.slg.module.rpc.client;
 public class ServerConfig {
     private String host;
     private int port;
-
     private int serverId;
 
     public ServerConfig() {
