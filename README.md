@@ -1,5 +1,5 @@
 # 游戏服务器框架 gameServer
-    JDK17
+    JDK21
     apache-maven-3.9.5
     脚本工具:protoc-28.2-win64  https://github.com/protocolbuffers/protobuf/releases
 
