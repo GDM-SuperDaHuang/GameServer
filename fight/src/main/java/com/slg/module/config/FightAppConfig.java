@@ -1,9 +1,6 @@
 package com.slg.module.config;
 
 
-import com.slg.common.config.ConfigManager;
-import com.slg.common.config.GameConfig;
-
 @ConfigManager.KVConfig(path = "fightServer.cfg")
 public class FightAppConfig extends GameConfig {
 

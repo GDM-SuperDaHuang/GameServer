@@ -1,30 +1,17 @@
 package com.slg.module.handle;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.slg.module.annotation.ToMethod;
 import com.slg.module.annotation.ToServer;
-import com.slg.module.message.ByteBufferMessage;
-
 import com.slg.module.message.MsgResponse;
-import com.slg.module.rpc.client.SentUtil;
 import io.netty.channel.ChannelHandlerContext;
 import message.Friend;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @ToServer
 public class Test {
     private static final Logger logger = LogManager.getLogger(Test.class);
-
-    @Autowired
-    private SentUtil sentUtil;
 
     @ToMethod(value = 101)
     public MsgResponse ffff(ChannelHandlerContext ctx, Friend.FriendRequest request, long userId){
@@ -37,9 +24,7 @@ public class Test {
 
         Friend.FriendsResponse.Builder friendsResponse = Friend.FriendsResponse.newBuilder()
                 .addAllUserIdList(longs);
-        MsgResponse msgResponse = new MsgResponse();
-        msgResponse.setBody(friendsResponse);
-        msgResponse.setErrorCode(0);
+        MsgResponse msgResponse = MsgResponse.newInstance(friendsResponse);
 
 //        // 使用异步调用获取响应
 //        CompletableFuture<ByteBufferMessage> future = sentUtil.sentMsgAsync(2, sendMsg);
