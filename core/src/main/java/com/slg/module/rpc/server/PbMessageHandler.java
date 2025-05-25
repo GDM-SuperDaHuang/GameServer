@@ -49,9 +49,9 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
             failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
             return;
         }
+
         GeneratedMessage.Builder<?> responseBody = response.getBody();
         Message message = responseBody.buildPartial();
-
         ByteBuf respBody = ByteBufAllocator.DEFAULT.buffer(message.getSerializedSize());// 预分配精确大小
         message.writeTo(new OutputStream() {
             @Override
@@ -71,14 +71,14 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
         response.recycle();
         ChannelFuture channelFuture = ctx.writeAndFlush(out);
         channelFuture.addListener(future -> {
+            respBody.release();
+            msg.recycle();
             if (future.isSuccess()) {
-                msg.recycle();
             } else {
                 System.err.println("Write and flush failed!!!!!: " + future.cause());
-                msg.recycle();
             }
         });
-        respBody.release();
+
     }
 
 
@@ -126,11 +126,10 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
         ByteBuf out = msgUtil.buildClientMsg(msg.getCid(), errorCode, msg.getProtocolId(), Constants.NoZip, Constants.NoEncrypted, Constants.NoLength, null);
         ChannelFuture channelFuture = ctx.writeAndFlush(out);
         channelFuture.addListener(future -> {
+            msg.recycle();
             if (!future.isSuccess()) {//通知客户端失败 日志 todo
-                msg.recycle();
                 System.err.println("Write and flush failed: " + future.cause());
             } else {
-                msg.recycle();
             }
         });
     }
