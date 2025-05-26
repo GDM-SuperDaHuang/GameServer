@@ -21,7 +21,6 @@ public class Test {
         Friend.FriendRequest.Builder sendMsg = Friend.FriendRequest.newBuilder()
                 .setUserId(778899L);
 
-
         Friend.FriendsResponse.Builder friendsResponse = Friend.FriendsResponse.newBuilder()
                 .addAllUserIdList(longs);
         MsgResponse msgResponse = MsgResponse.newInstance(friendsResponse);
