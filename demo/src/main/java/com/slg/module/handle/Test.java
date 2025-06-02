@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 import message.Friend;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 
 @ToServer
@@ -14,12 +15,39 @@ public class Test {
     private static final Logger logger = LogManager.getLogger(Test.class);
 
     @ToMethod(value = 101)
-    public MsgResponse ffff(ChannelHandlerContext ctx, Friend.FriendRequest request, long userId){
+    public MsgResponse ffff(ChannelHandlerContext ctx, Friend.FriendRequest request, long userId) {
         ArrayList<Long> longs = new ArrayList<>();
         longs.add(110L);
         longs.add(211L);
-        Friend.FriendRequest.Builder sendMsg = Friend.FriendRequest.newBuilder()
-                .setUserId(778899L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
+        longs.add(211L);
 
         Friend.FriendsResponse.Builder friendsResponse = Friend.FriendsResponse.newBuilder()
                 .addAllUserIdList(longs);

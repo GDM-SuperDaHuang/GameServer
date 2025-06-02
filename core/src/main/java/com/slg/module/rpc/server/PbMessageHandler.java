@@ -54,16 +54,26 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
         if (original != null) {
             msgObject = parse.invoke(null, original);
         } else {
-            ByteBuffer body = reqBody.nioBuffer();
-            msgObject = parse.invoke(null, body);
+            msgObject = parse.invoke(null, reqBody.nioBuffer());
         }
+
 
         //响应
         MsgResponse response = route(ctx, msgObject, protocolId, userId);
         if (response == null) {
             failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+            if (zipBuf != null) {
+                zipBuf.release();
+            }
             return;
         }
+        int cid = msg.getCid();
+        msg.recycle();
+
+        if (zipBuf != null) {
+            zipBuf.release();
+        }
+
         GeneratedMessage.Builder<?> responseBody = response.getBody();
         Message message = responseBody.buildPartial();
         ByteBuf respBody = ctx.alloc().buffer(message.getSerializedSize());
@@ -81,20 +91,18 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
         });
         short bodyLength = (short) respBody.readableBytes(); // 原始数据长度
         if (bodyLength > 20) {
-            //先压缩，后加密
+            //先压缩
             ByteBuf compressBuf = LZ4Compression.compressWithLengthHeader(respBody, bodyLength);
             short zipLength = (short) compressBuf.readableBytes();
             ByteBuf out;
             if (zipLength < bodyLength) {
-                out = MsgUtil.buildClientMsg(ctx, msg.getCid(), response.getErrorCode(), protocolId, Constants.Zip, Constants.NoEncrypted, zipLength, compressBuf);
+                out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.Zip, Constants.NoEncrypted, zipLength, compressBuf);
             } else {
                 compressBuf.release();
-                out = MsgUtil.buildClientMsg(ctx, msg.getCid(), response.getErrorCode(), protocolId, Constants.NoZip, Constants.NoEncrypted, bodyLength, respBody);
+                out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.NoZip, Constants.NoEncrypted, bodyLength, respBody);
             }
             ChannelFuture channelFuture = ctx.writeAndFlush(out);
             channelFuture.addListener(future -> {
-                respBody.release();
-                msg.recycle();
                 if (!future.isSuccess()) {
                     out.release();
                     System.err.println("Write and flush failed: " + future.cause());
@@ -102,14 +110,13 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
             });
             return;
         }
+
         //写回
-        ByteBuf out = MsgUtil.buildServerMsg(ctx, userId, msg.getCid(), response.getErrorCode(), protocolId, 0, 1, bodyLength, respBody);
+        ByteBuf out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, 0, 1, bodyLength, respBody);
         //对象回收
         response.recycle();
         ChannelFuture channelFuture = ctx.writeAndFlush(out);
         channelFuture.addListener(future -> {
-            respBody.release();
-            msg.recycle();
             if (future.isSuccess()) {
             } else {
                 out.release();
