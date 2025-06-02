@@ -25,8 +25,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SentUtil {
     ServerConfig serverConfig1 = new ServerConfig("127.0.0.1", 10101, 1);
     ServerConfig serverConfig2 = new ServerConfig("127.0.0.1", 7777, 2);
+
     @Autowired
     private DownstreamServerHandler downstreamServerHandler;
+
     private Map<Integer, Channel> serverChannelMap = new ConcurrentHashMap<>();
     private final EventLoopGroup downstreamGroup = new NioEventLoopGroup(1);
     private ConcurrentHashMap<Integer, CompletableFuture<ByteBufferServerMessage>> pendingRequests = new ConcurrentHashMap<>();
