@@ -98,6 +98,21 @@ public class SentUtil {
         return future;
     }
 
+    public <T extends GeneratedMessageV3> CompletableFuture<T> sentMsgAsync(
+        int protocolId, 
+        GeneratedMessage.Builder<?> builder, 
+        Function<byte[], T> parserFunction) {
+    
+    CompletableFuture<ByteBufferServerMessage> rawFuture = sentMsgAsync(protocolId, builder);
+    
+    return rawFuture.thenApply(response -> {
+        try {
+            return parserFunction.apply(response.getBody());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse response", e);
+        }
+    });
+}
 
     // 处理响应的示例方法
     public <T> void handleResponse(int cid, Object response, Class<T> clazz) {
