@@ -1,7 +1,9 @@
 package com.slg.module.rpc.server;
 
+import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.slg.module.rpc.msgDECode.MsgDecode;
 import com.slg.module.util.ConfigReader;
+import com.slg.module.util.NacosClientUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
@@ -13,6 +15,9 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class NodeServer {
     private int port;
@@ -26,6 +31,8 @@ public class NodeServer {
     private final PbMessageHandler pbMessageHandler = new PbMessageHandler();
     private ChannelFuture serverChannelFuture;
     LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
+
+    NacosClientUtil client = new NacosClientUtil("localhost:8848", "Node");
 
 
     public NodeServer() {
@@ -76,6 +83,25 @@ public class NodeServer {
         serverChannelFuture.addListener(future -> {
             if (future.isSuccess()) {
                 System.out.println("===== 节点服务器启动成功，端口: " + port + " =====");
+//                client.waitForConnected(1000); // 等待最长10秒
+
+                // 注册服务实例
+                Map<String, String> metadata = new HashMap<>();
+                metadata.put("version", "1.0.0");
+                metadata.put("author", "doubao");
+                client.registerInstance("my-service", "DEFAULT_GROUP", "127.0.0.1", 9005, 1.0, metadata);
+
+                // 获取服务实例列表
+                List<Instance> instances = client.getInstances("my-service", "DEFAULT_GROUP", true);
+                System.out.println("服务实例列表: " + instances);
+
+                // 发布配置
+                client.publishConfig("application.properties", "DEFAULT_GROUP", "server.port=8080\nspring.application.name=my-service");
+
+                // 获取配置
+                String config = client.getConfig("application.properties", "DEFAULT_GROUP", 5000);
+                System.out.println("配置内容: " + config);
+
             } else {
                 System.err.println("!!!!! 节点服务器启动失败 !!!!!");
                 future.cause().printStackTrace();

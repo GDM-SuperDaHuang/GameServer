@@ -69,9 +69,9 @@ public class Test {
 //            System.err.println("Request failed: " + ex.getMessage());
 //            return null;
 //        });
-//        System.err.println("222222222222222");
-//
-//        // 同步等待（如果需要）
+        System.err.println("222222222222222");
+
+        // 同步等待（如果需要）
 //        ByteBufferMessage response = null;
 //        try {
 //            response = future.get(5, TimeUnit.SECONDS);

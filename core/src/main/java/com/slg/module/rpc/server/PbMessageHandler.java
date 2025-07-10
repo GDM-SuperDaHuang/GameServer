@@ -13,6 +13,7 @@ import io.netty.channel.*;
 import io.netty.handler.codec.DecoderException;
 
 import javax.crypto.SecretKey;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,7 +29,7 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
     HandlePbBeanManager handlePbBeanManager = HandlePbBeanManager.getInstance();
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBufferServerMessage msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, ByteBufferServerMessage msg) {
         long userId = msg.getUserId();
         int protocolId = msg.getProtocolId();
         ByteBuf zipBuf = null;//解压缩标志
@@ -52,9 +53,19 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
         }
         Object msgObject;
         if (original != null) {
-            msgObject = parse.invoke(null, original);
+            try {
+                msgObject = parse.invoke(null, original);
+            } catch (Exception e) {
+                failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                return;
+            }
         } else {
-            msgObject = parse.invoke(null, reqBody.nioBuffer());
+            try {
+                msgObject = parse.invoke(null, reqBody.nioBuffer());
+            } catch (Exception e) {
+                failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                return;
+            }
         }
 
 
@@ -68,6 +79,7 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
             return;
         }
         int cid = msg.getCid();
+        //释放
         msg.recycle();
 
         if (zipBuf != null) {
@@ -78,17 +90,24 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
         Message message = responseBody.buildPartial();
         ByteBuf respBody = ctx.alloc().buffer(message.getSerializedSize());
 
-        message.writeTo(new OutputStream() {
-            @Override
-            public void write(int b) {
-                respBody.writeByte(b);
-            }
+        try {
+            message.writeTo(new OutputStream() {
+                @Override
+                public void write(int b) {
+                    respBody.writeByte(b);
+                }
 
-            @Override
-            public void write(byte[] b, int off, int len) {
-                respBody.writeBytes(b, off, len);
-            }
-        });
+                @Override
+                public void write(byte[] b, int off, int len) {
+                    respBody.writeBytes(b, off, len);
+                }
+            });
+        } catch (IOException e) {
+            // 日志记录 todo
+            respBody.release();
+            return;
+        }
+
         short bodyLength = (short) respBody.readableBytes(); // 原始数据长度
         if (bodyLength > 20) {
             //先压缩
@@ -108,6 +127,7 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
                     System.err.println("Write and flush failed: " + future.cause());
                 }
             });
+            respBody.release();
             return;
         }
 
@@ -141,24 +161,28 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
     }
 
 
-    private MsgResponse route(ChannelHandlerContext ctx, Object message, int protocolId, long userId) throws Exception {
-        Class<?> handleClazz = handlePbBeanManager.getClassHandle(protocolId);
-        if (handleClazz == null) {
-            return null;
-        }
-        Method handleMethod = handlePbBeanManager.getHandleMethod(protocolId);
-        if (handleMethod == null) {
-            return null;
-        }
-        handleMethod.setAccessible(true);
-        Object bean = BeanTool.getBean(handleClazz);
-        if (bean == null) {
-            return null;
-        }
-        Object invoke = handleMethod.invoke(bean, ctx, message, userId);
-        if (invoke instanceof MsgResponse) {
-            return (MsgResponse) invoke;
-        } else {
+    private MsgResponse route(ChannelHandlerContext ctx, Object message, int protocolId, long userId) {
+        try {
+            Class<?> handleClazz = handlePbBeanManager.getClassHandle(protocolId);
+            if (handleClazz == null) {
+                return null;
+            }
+            Method handleMethod = handlePbBeanManager.getHandleMethod(protocolId);
+            if (handleMethod == null) {
+                return null;
+            }
+            handleMethod.setAccessible(true);
+            Object bean = BeanTool.getBean(handleClazz);
+            if (bean == null) {
+                return null;
+            }
+            Object invoke = handleMethod.invoke(bean, ctx, message, userId);
+            if (invoke instanceof MsgResponse) {
+                return (MsgResponse) invoke;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
             return null;
         }
     }
