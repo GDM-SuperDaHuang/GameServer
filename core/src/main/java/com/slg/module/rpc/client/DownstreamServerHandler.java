@@ -1,12 +1,10 @@
 package com.slg.module.rpc.client;
 import com.slg.module.message.ByteBufferServerMessage;
-import com.slg.module.util.BeanTool;
-import io.netty.buffer.ByteBuf;
+import com.slg.module.util.SentMsgUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.DecoderException;
-import org.springframework.stereotype.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.net.SocketException;
 import java.util.concurrent.CompletableFuture;
@@ -14,9 +12,13 @@ import java.util.concurrent.CompletableFuture;
 /**
  * 处理远程服务器连接
  */
-@Component
 @ChannelHandler.Sharable
 public class DownstreamServerHandler extends SimpleChannelInboundHandler<ByteBufferServerMessage> {
+   private SentMsgUtil sentUtil ;
+
+    public DownstreamServerHandler(SentMsgUtil sentUtil) {
+        this.sentUtil = sentUtil;
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
@@ -27,9 +29,6 @@ public class DownstreamServerHandler extends SimpleChannelInboundHandler<ByteBuf
     @Override
     protected void channelRead0(ChannelHandlerContext cxt, ByteBufferServerMessage msg) throws Exception {
         int cid = msg.getCid();
-        int protocolId = msg.getProtocolId();
-        ByteBuf body = msg.getBody();
-        SentUtil sentUtil = BeanTool.getBean(SentUtil.class);
         // 获取关联的 Future 并完成
         CompletableFuture<ByteBufferServerMessage> future = sentUtil.getPendingRequests(cid);
         if (future != null) {

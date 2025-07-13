@@ -25,125 +25,124 @@ import java.nio.ByteBuffer;
  */
 @ChannelHandler.Sharable
 public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServerMessage> {
-
     HandlePbBeanManager handlePbBeanManager = HandlePbBeanManager.getInstance();
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBufferServerMessage msg) {
         long userId = msg.getUserId();
         int protocolId = msg.getProtocolId();
-        ByteBuf zipBuf = null;//解压缩标志
-        ByteBuffer original = null;
-        ByteBuf reqBody = msg.getBody();
-
-        //解压缩
-        if (msg.getZip() == Constants.Zip) {
-            short originalLength = reqBody.readShort();
-            zipBuf = LZ4Compression.decompress(reqBody, originalLength);
-            original = zipBuf.nioBuffer();
-        }
-
-        Method parse = handlePbBeanManager.getParseFromMethod(protocolId);
-        if (parse == null) {
-            if (zipBuf != null) {
-                zipBuf.release();
+        Thread virtualThread = Thread.startVirtualThread(() -> {
+            ByteBuf zipBuf = null;//解压缩标志
+            ByteBuffer original = null;
+            ByteBuf reqBody = msg.getBody();
+            //解压缩
+            if (msg.getZip() == Constants.Zip) {
+                short originalLength = reqBody.readShort();
+                zipBuf = LZ4Compression.decompress(reqBody, originalLength);
+                original = zipBuf.nioBuffer();
             }
-            failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
-            return;
-        }
-        Object msgObject;
-        if (original != null) {
-            try {
-                msgObject = parse.invoke(null, original);
-            } catch (Exception e) {
+
+            Method parse = handlePbBeanManager.getParseFromMethod(protocolId);
+            if (parse == null) {
+                if (zipBuf != null) {
+                    zipBuf.release();
+                }
                 failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
                 return;
             }
-        } else {
-            try {
-                msgObject = parse.invoke(null, reqBody.nioBuffer());
-            } catch (Exception e) {
-                failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
-                return;
-            }
-        }
-
-
-        //响应
-        MsgResponse response = route(ctx, msgObject, protocolId, userId);
-        if (response == null) {
-            failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
-            if (zipBuf != null) {
-                zipBuf.release();
-            }
-            return;
-        }
-        int cid = msg.getCid();
-        //释放
-        msg.recycle();
-
-        if (zipBuf != null) {
-            zipBuf.release();
-        }
-
-        GeneratedMessage.Builder<?> responseBody = response.getBody();
-        Message message = responseBody.buildPartial();
-        ByteBuf respBody = ctx.alloc().buffer(message.getSerializedSize());
-
-        try {
-            message.writeTo(new OutputStream() {
-                @Override
-                public void write(int b) {
-                    respBody.writeByte(b);
+            Object msgObject;
+            if (original != null) {
+                try {
+                    msgObject = parse.invoke(null, original);
+                } catch (Exception e) {
+                    failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                    return;
                 }
-
-                @Override
-                public void write(byte[] b, int off, int len) {
-                    respBody.writeBytes(b, off, len);
-                }
-            });
-        } catch (IOException e) {
-            // 日志记录 todo
-            respBody.release();
-            return;
-        }
-
-        short bodyLength = (short) respBody.readableBytes(); // 原始数据长度
-        if (bodyLength > 20) {
-            //先压缩
-            ByteBuf compressBuf = LZ4Compression.compressWithLengthHeader(respBody, bodyLength);
-            short zipLength = (short) compressBuf.readableBytes();
-            ByteBuf out;
-            if (zipLength < bodyLength) {
-                out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.Zip, Constants.NoEncrypted, zipLength, compressBuf);
             } else {
-                compressBuf.release();
-                out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.NoZip, Constants.NoEncrypted, bodyLength, respBody);
+                try {
+                    msgObject = parse.invoke(null, reqBody.nioBuffer());
+                } catch (Exception e) {
+                    failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                    return;
+                }
             }
+
+
+            //响应
+            MsgResponse response = route(ctx, msgObject, protocolId, userId);
+            if (response == null) {
+                failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                if (zipBuf != null) {
+                    zipBuf.release();
+                }
+                return;
+            }
+            int cid = msg.getCid();
+            //释放
+            msg.recycle();
+
+            if (zipBuf != null) {
+                zipBuf.release();
+            }
+
+            GeneratedMessage.Builder<?> responseBody = response.getBody();
+            Message message = responseBody.buildPartial();
+            ByteBuf respBody = ctx.alloc().buffer(message.getSerializedSize());
+
+            try {
+                message.writeTo(new OutputStream() {
+                    @Override
+                    public void write(int b) {
+                        respBody.writeByte(b);
+                    }
+
+                    @Override
+                    public void write(byte[] b, int off, int len) {
+                        respBody.writeBytes(b, off, len);
+                    }
+                });
+            } catch (IOException e) {
+                // 日志记录 todo
+                respBody.release();
+                return;
+            }
+
+            short bodyLength = (short) respBody.readableBytes(); // 原始数据长度
+            if (bodyLength > 20) {
+                //先压缩
+                ByteBuf compressBuf = LZ4Compression.compressWithLengthHeader(respBody, bodyLength);
+                short zipLength = (short) compressBuf.readableBytes();
+                ByteBuf out;
+                if (zipLength < bodyLength) {
+                    out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.Zip, Constants.NoEncrypted, zipLength, compressBuf);
+                } else {
+                    compressBuf.release();
+                    out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.NoZip, Constants.NoEncrypted, bodyLength, respBody);
+                }
+                ChannelFuture channelFuture = ctx.writeAndFlush(out);
+                channelFuture.addListener(future -> {
+                    if (!future.isSuccess()) {
+//                        out.release();
+                        System.err.println("Write and flush failed: " + future.cause());
+                    }
+                });
+                respBody.release();
+                return;
+            }
+
+            //写回
+            ByteBuf out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, 0, 1, bodyLength, respBody);
+            //对象回收
+            response.recycle();
             ChannelFuture channelFuture = ctx.writeAndFlush(out);
             channelFuture.addListener(future -> {
-                if (!future.isSuccess()) {
-                    out.release();
-                    System.err.println("Write and flush failed: " + future.cause());
+                if (future.isSuccess()) {
+                } else {
+//                    out.release();
+                    System.err.println("Write and flush failed!!!!!: " + future.cause());
                 }
             });
-            respBody.release();
-            return;
-        }
-
-        //写回
-        ByteBuf out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, 0, 1, bodyLength, respBody);
-        //对象回收
-        response.recycle();
-        ChannelFuture channelFuture = ctx.writeAndFlush(out);
-        channelFuture.addListener(future -> {
-            if (future.isSuccess()) {
-            } else {
-                out.release();
-                System.err.println("Write and flush failed!!!!!: " + future.cause());
-            }
         });
-
     }
 
 

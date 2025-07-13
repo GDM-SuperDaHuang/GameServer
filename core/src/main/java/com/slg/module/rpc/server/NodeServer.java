@@ -1,6 +1,8 @@
 package com.slg.module.rpc.server;
 
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.slg.module.connection.ServerConfigManager;
+import com.slg.module.message.Constants;
 import com.slg.module.rpc.msgDECode.MsgDecode;
 import com.slg.module.util.ConfigReader;
 import com.slg.module.util.NacosClientUtil;
@@ -31,9 +33,11 @@ public class NodeServer {
     private final PbMessageHandler pbMessageHandler = new PbMessageHandler();
     private ChannelFuture serverChannelFuture;
     LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
-
-    NacosClientUtil client = new NacosClientUtil("localhost:8848", "Node");
-
+    ConfigReader configReader = new ConfigReader("application.properties");
+    NacosClientUtil client = NacosClientUtil.getInstance(
+            configReader.getProperty("nacos.serverAddr"),  // Nacos服务器地址
+            configReader.getProperty("nacos.namespace")  // 命名空间ID（如为空字符串则使用默认命名空间）
+    );
 
     public NodeServer() {
         try {
@@ -84,24 +88,23 @@ public class NodeServer {
             if (future.isSuccess()) {
                 System.out.println("===== 节点服务器启动成功，端口: " + port + " =====");
 //                client.waitForConnected(1000); // 等待最长10秒
-
                 // 注册服务实例
                 Map<String, String> metadata = new HashMap<>();
-                metadata.put("version", "1.0.0");
-                metadata.put("author", "doubao");
-                client.registerInstance("my-service", "DEFAULT_GROUP", "127.0.0.1", 9005, 1.0, metadata);
-
-                // 获取服务实例列表
-                List<Instance> instances = client.getInstances("my-service", "DEFAULT_GROUP", true);
-                System.out.println("服务实例列表: " + instances);
-
-                // 发布配置
-                client.publishConfig("application.properties", "DEFAULT_GROUP", "server.port=8080\nspring.application.name=my-service");
-
-                // 获取配置
-                String config = client.getConfig("application.properties", "DEFAULT_GROUP", 5000);
-                System.out.println("配置内容: " + config);
-
+                String group = configReader.getProperty("nacos.service.group");
+                if (group == null) {
+                    group = "DEFAULT_GROUP";
+                }
+                String host = configReader.getProperty("netty.server.host");
+                String serverName = configReader.getProperty("nacos.service.name");
+                String pbMin = configReader.getProperty("server.proto-id-min");
+                String pbMax = configReader.getProperty("server.proto-id-max");
+                String serverId = configReader.getProperty("netty.server.serverId");
+                String groupId = configReader.getProperty("netty.server.group-id");//组
+                metadata.put(Constants.ProtoMinId, pbMin);
+                metadata.put(Constants.ProtoMaxId, pbMax);
+                metadata.put(Constants.GroupId, groupId);
+                client.registerInstance(serverId, serverName, group, host, port, 1.0, metadata);
+                ServerConfigManager.getInstance(serverName, group, null, serverId);
             } else {
                 System.err.println("!!!!! 节点服务器启动失败 !!!!!");
                 future.cause().printStackTrace();
@@ -116,6 +119,7 @@ public class NodeServer {
         }
         workerGroup.shutdownGracefully();
         bossGroup.shutdownGracefully();
+        client.close();
     }
 
 }
