@@ -1,0 +1,405 @@
+package com.slg.module.rpc.server;
+
+import com.google.protobuf.GeneratedMessage;
+import com.google.protobuf.Message;
+import com.slg.module.connection.DHKeyInfo;
+import com.slg.module.message.*;
+import com.slg.module.register.HandlePbBeanManager;
+import com.slg.module.util.BeanTool;
+import com.slg.module.util.CryptoUtils;
+import com.slg.module.util.LZ4Compression;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.*;
+import io.netty.handler.codec.DecoderException;
+import io.netty.util.concurrent.FastThreadLocal;
+
+import javax.crypto.SecretKey;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.SocketException;
+import java.nio.ByteBuffer;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * 网关--本地服务器
+ */
+@ChannelHandler.Sharable
+public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServerMessage> {
+    HandlePbBeanManager handlePbBeanManager = HandlePbBeanManager.getInstance();
+
+
+    // 用户ID到虚拟线程上下文的映射
+    private static final ConcurrentHashMap<Long, UserVirtualThreadContext> userContexts = new ConcurrentHashMap<>();
+
+    // 工作线程本地锁（确保线程安全）
+    private static final FastThreadLocal<ReentrantLock> lockLocal =
+            new FastThreadLocal<ReentrantLock>() {
+                @Override
+                protected ReentrantLock initialValue() {
+                    return new ReentrantLock();
+                }
+            };
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, ByteBufferServerMessage msg) {
+        long userId = msg.getUserId();
+        int protocolId = msg.getProtocolId();
+        final EventLoop worker = ctx.channel().eventLoop();
+
+        // 获取或创建用户上下文（绑定到当前工作线程）
+        UserVirtualThreadContext context = userContexts.compute(userId, (key, existing) -> {
+            if (existing != null && existing.isActive() && existing.belongsTo(worker)) {
+                return existing; // 复用现有上下文
+            }
+            if (existing != null) {
+                existing.close(); // 关闭旧的上下文（如果worker不同）
+            }
+            return new UserVirtualThreadContext(worker, userId); // 创建新上下文
+        });
+
+        // 提交任务到虚拟线程（通过工作线程调度）
+        context.executeTask(() -> {
+                    ByteBuf zipBuf = null;//解压缩标志
+                    ByteBuffer original = null;
+                    ByteBuf reqBody = msg.getBody();
+                    //解压缩
+                    if (msg.getZip() == Constants.Zip) {
+                        short originalLength = reqBody.readShort();
+                        zipBuf = LZ4Compression.decompress(reqBody, originalLength);
+                        original = zipBuf.nioBuffer();
+                    }
+
+                    Method parse = handlePbBeanManager.getParseFromMethod(protocolId);
+                    if (parse == null) {
+                        if (zipBuf != null) {
+                            zipBuf.release();
+                        }
+                        failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                        return;
+                    }
+                    Object msgObject;
+                    if (original != null) {
+                        try {
+                            msgObject = parse.invoke(null, original);
+                        } catch (Exception e) {
+                            failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                            return;
+                        }
+                    } else {
+                        try {
+                            msgObject = parse.invoke(null, reqBody.nioBuffer());
+                        } catch (Exception e) {
+                            failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                            return;
+                        }
+                    }
+
+
+                    //响应
+                    MsgResponse response = route(ctx, msgObject, protocolId, userId);
+                    if (response == null) {
+                        failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                        if (zipBuf != null) {
+                            zipBuf.release();
+                        }
+                        return;
+                    }
+                    int cid = msg.getCid();
+                    //释放
+                    msg.recycle();
+
+                    if (zipBuf != null) {
+                        zipBuf.release();
+                    }
+
+                    GeneratedMessage.Builder<?> responseBody = response.getBody();
+                    Message message = responseBody.buildPartial();
+                    ByteBuf respBody = ctx.alloc().buffer(message.getSerializedSize());
+
+                    try {
+                        message.writeTo(new OutputStream() {
+                            @Override
+                            public void write(int b) {
+                                respBody.writeByte(b);
+                            }
+
+                            @Override
+                            public void write(byte[] b, int off, int len) {
+                                respBody.writeBytes(b, off, len);
+                            }
+                        });
+                    } catch (IOException e) {
+                        // 日志记录 todo
+                        respBody.release();
+                        return;
+                    }
+
+                    short bodyLength = (short) respBody.readableBytes(); // 原始数据长度
+                    if (bodyLength > 20) {
+                        //先压缩
+                        ByteBuf compressBuf = LZ4Compression.compressWithLengthHeader(respBody, bodyLength);
+                        short zipLength = (short) compressBuf.readableBytes();
+                        ByteBuf out;
+                        if (zipLength < bodyLength) {
+                            out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.Zip, Constants.NoEncrypted, zipLength, compressBuf);
+                        } else {
+                            compressBuf.release();
+                            out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.NoZip, Constants.NoEncrypted, bodyLength, respBody);
+                        }
+                        ChannelFuture channelFuture = ctx.writeAndFlush(out);
+                        channelFuture.addListener(future -> {
+                            if (!future.isSuccess()) {
+//                        out.release();
+                                System.err.println("Write and flush failed: " + future.cause());
+                            }
+                        });
+                        respBody.release();
+                        return;
+                    }
+
+                    //写回
+                    ByteBuf out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, 0, 1, bodyLength, respBody);
+                    //对象回收
+                    response.recycle();
+                    ChannelFuture channelFuture = ctx.writeAndFlush(out);
+                    channelFuture.addListener(future -> {
+                        if (future.isSuccess()) {
+                        } else {
+//                    out.release();
+                            System.err.println("Write and flush failed!!!!!: " + future.cause());
+                        }
+                    });
+                }
+        );
+
+
+        Thread virtualThread = Thread.startVirtualThread(() -> {
+
+            ByteBuf zipBuf = null;//解压缩标志
+            ByteBuffer original = null;
+            ByteBuf reqBody = msg.getBody();
+            //解压缩
+            if (msg.getZip() == Constants.Zip) {
+                short originalLength = reqBody.readShort();
+                zipBuf = LZ4Compression.decompress(reqBody, originalLength);
+                original = zipBuf.nioBuffer();
+            }
+
+            Method parse = handlePbBeanManager.getParseFromMethod(protocolId);
+            if (parse == null) {
+                if (zipBuf != null) {
+                    zipBuf.release();
+                }
+                failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                return;
+            }
+            Object msgObject;
+            if (original != null) {
+                try {
+                    msgObject = parse.invoke(null, original);
+                } catch (Exception e) {
+                    failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                    return;
+                }
+            } else {
+                try {
+                    msgObject = parse.invoke(null, reqBody.nioBuffer());
+                } catch (Exception e) {
+                    failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                    return;
+                }
+            }
+
+
+            //响应
+            MsgResponse response = route(ctx, msgObject, protocolId, userId);
+            if (response == null) {
+                failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
+                if (zipBuf != null) {
+                    zipBuf.release();
+                }
+                return;
+            }
+            int cid = msg.getCid();
+            //释放
+            msg.recycle();
+
+            if (zipBuf != null) {
+                zipBuf.release();
+            }
+
+            GeneratedMessage.Builder<?> responseBody = response.getBody();
+            Message message = responseBody.buildPartial();
+            ByteBuf respBody = ctx.alloc().buffer(message.getSerializedSize());
+
+            try {
+                message.writeTo(new OutputStream() {
+                    @Override
+                    public void write(int b) {
+                        respBody.writeByte(b);
+                    }
+
+                    @Override
+                    public void write(byte[] b, int off, int len) {
+                        respBody.writeBytes(b, off, len);
+                    }
+                });
+            } catch (IOException e) {
+                // 日志记录 todo
+                respBody.release();
+                return;
+            }
+
+            short bodyLength = (short) respBody.readableBytes(); // 原始数据长度
+            if (bodyLength > 20) {
+                //先压缩
+                ByteBuf compressBuf = LZ4Compression.compressWithLengthHeader(respBody, bodyLength);
+                short zipLength = (short) compressBuf.readableBytes();
+                ByteBuf out;
+                if (zipLength < bodyLength) {
+                    out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.Zip, Constants.NoEncrypted, zipLength, compressBuf);
+                } else {
+                    compressBuf.release();
+                    out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.NoZip, Constants.NoEncrypted, bodyLength, respBody);
+                }
+                ChannelFuture channelFuture = ctx.writeAndFlush(out);
+                channelFuture.addListener(future -> {
+                    if (!future.isSuccess()) {
+//                        out.release();
+                        System.err.println("Write and flush failed: " + future.cause());
+                    }
+                });
+                respBody.release();
+                return;
+            }
+
+            //写回
+            ByteBuf out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, 0, 1, bodyLength, respBody);
+            //对象回收
+            response.recycle();
+            ChannelFuture channelFuture = ctx.writeAndFlush(out);
+            channelFuture.addListener(future -> {
+                if (future.isSuccess()) {
+                } else {
+//                    out.release();
+                    System.err.println("Write and flush failed!!!!!: " + future.cause());
+                }
+            });
+
+
+        });
+    }
+
+
+    //todo
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        if (cause instanceof InvocationTargetException) {
+            //目标方法错误
+        } else if (cause instanceof SocketException
+                || cause instanceof DecoderException) {
+            //客户端关闭连接/连接错误
+            // 关闭连接
+            ctx.close();
+        }
+    }
+
+
+    private MsgResponse route(ChannelHandlerContext ctx, Object message, int protocolId, long userId) {
+        try {
+            Class<?> handleClazz = handlePbBeanManager.getClassHandle(protocolId);
+            if (handleClazz == null) {
+                return null;
+            }
+            Method handleMethod = handlePbBeanManager.getHandleMethod(protocolId);
+            if (handleMethod == null) {
+                return null;
+            }
+            handleMethod.setAccessible(true);
+            Object bean = BeanTool.getBean(handleClazz);
+            if (bean == null) {
+                return null;
+            }
+            Object invoke = handleMethod.invoke(bean, ctx, message, userId);
+            if (invoke instanceof MsgResponse) {
+                return (MsgResponse) invoke;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+    private void failedNotificationClient(ChannelHandlerContext ctx, ByteBufferServerMessage msg, int errorCode) {
+        //日志记录失败日志 todo
+
+        // 发送失败,直接返回，告诉客户端
+        ByteBuf out = MsgUtil.buildClientMsg(ctx, msg.getCid(), errorCode, msg.getProtocolId(), Constants.NoZip, Constants.NoEncrypted, Constants.NoLength, null);
+        ChannelFuture channelFuture = ctx.writeAndFlush(out);
+        channelFuture.addListener(future -> {
+            msg.recycle();
+            if (!future.isSuccess()) {//通知客户端失败 日志 todo
+                System.err.println("Write and flush failed: " + future.cause());
+            } else {
+            }
+        });
+    }
+
+
+    // 用户虚拟线程上下文（绑定到特定工作线程）
+    static class UserVirtualThreadContext {
+        private final EventLoop worker;
+        private final long userId;
+        private volatile boolean active = true;
+        private volatile boolean closed = false;
+
+        public UserVirtualThreadContext(EventLoop worker, long userId) {
+            this.worker = worker;
+            this.userId = userId;
+            System.out.printf("[%s] Created context for user %d%n", worker, userId);
+        }
+
+        public void executeTask(Runnable task) {
+            if (closed) return;
+
+            // 通过工作线程启动虚拟线程
+            worker.execute(() -> {
+                if (closed) return;
+                Thread.startVirtualThread(task);
+            });
+        }
+
+        public void executeOnWorker(Runnable task) {
+            if (closed) return;
+
+            // 直接在工作线程执行
+            worker.execute(() -> {
+                if (!closed) task.run();
+            });
+        }
+
+        public void close() {
+            if (!closed) {
+                closed = true;
+                active = false;
+                System.out.printf("[%s] Closed context for user %d%n", worker, userId);
+            }
+        }
+
+        public boolean isActive() {
+            return active && !closed;
+        }
+
+        public boolean belongsTo(EventLoop eventLoop) {
+            return worker == eventLoop;
+        }
+    }
+}

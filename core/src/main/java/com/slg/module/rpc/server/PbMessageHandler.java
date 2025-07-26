@@ -11,6 +11,7 @@ import com.slg.module.util.LZ4Compression;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.handler.codec.DecoderException;
+import io.netty.util.concurrent.FastThreadLocal;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -19,6 +20,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 网关--本地服务器
@@ -27,11 +34,26 @@ import java.nio.ByteBuffer;
 public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServerMessage> {
     HandlePbBeanManager handlePbBeanManager = HandlePbBeanManager.getInstance();
 
+
+    // 虚拟线程池（每个用户一个专用虚拟线程）
+    private final ConcurrentHashMap<Long, ExecutorService> userThreadMap = new ConcurrentHashMap<>();
+
+    // 虚拟线程工厂（命名线程）
+    private static final ThreadFactory virtualThreadFactory = Thread.ofVirtual()
+            .name("user-processor-", 0)
+            .factory();
+
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBufferServerMessage msg) {
         long userId = msg.getUserId();
         int protocolId = msg.getProtocolId();
-        Thread virtualThread = Thread.startVirtualThread(() -> {
+        final EventLoop worker = ctx.channel().eventLoop();
+        // 获取或创建用户专属虚拟线程
+        ExecutorService userExecutor = userThreadMap.computeIfAbsent(userId, uid -> Executors.newSingleThreadExecutor(virtualThreadFactory));
+
+        // 提交任务到用户专属虚拟线程
+        userExecutor.execute(() -> {
             ByteBuf zipBuf = null;//解压缩标志
             ByteBuffer original = null;
             ByteBuf reqBody = msg.getBody();
@@ -45,7 +67,8 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
             Method parse = handlePbBeanManager.getParseFromMethod(protocolId);
             if (parse == null) {
                 if (zipBuf != null) {
-                    zipBuf.release();
+                    safeRelease(ctx, zipBuf);
+//                    zipBuf.release();
                 }
                 failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
                 return;
@@ -73,7 +96,8 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
             if (response == null) {
                 failedNotificationClient(ctx, msg, ErrorCodeConstants.SERIALIZATION_METHOD_LACK);
                 if (zipBuf != null) {
-                    zipBuf.release();
+                    safeRelease(ctx, zipBuf);
+//                    zipBuf.release();
                 }
                 return;
             }
@@ -82,7 +106,8 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
             msg.recycle();
 
             if (zipBuf != null) {
-                zipBuf.release();
+                safeRelease(ctx, zipBuf);
+//                zipBuf.release();
             }
 
             GeneratedMessage.Builder<?> responseBody = response.getBody();
@@ -103,7 +128,8 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
                 });
             } catch (IOException e) {
                 // 日志记录 todo
-                respBody.release();
+                safeRelease(ctx, respBody);
+//                respBody.release();
                 return;
             }
 
@@ -116,7 +142,8 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
                 if (zipLength < bodyLength) {
                     out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.Zip, Constants.NoEncrypted, zipLength, compressBuf);
                 } else {
-                    compressBuf.release();
+                    safeRelease(ctx, compressBuf);
+//                    compressBuf.release();
                     out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, Constants.NoZip, Constants.NoEncrypted, bodyLength, respBody);
                 }
                 ChannelFuture channelFuture = ctx.writeAndFlush(out);
@@ -126,14 +153,16 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
                         System.err.println("Write and flush failed: " + future.cause());
                     }
                 });
-                respBody.release();
+                safeRelease(ctx, respBody);
+//                respBody.release();
                 return;
             }
 
             //写回
             ByteBuf out = MsgUtil.buildServerMsg(ctx, userId, cid, response.getErrorCode(), protocolId, 0, 1, bodyLength, respBody);
             //对象回收
-            response.recycle();
+            safeRelease(ctx,response);
+//            response.recycle();
             ChannelFuture channelFuture = ctx.writeAndFlush(out);
             channelFuture.addListener(future -> {
                 if (future.isSuccess()) {
@@ -143,9 +172,8 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
                 }
             });
         });
+
     }
-
-
     //todo
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
@@ -158,7 +186,6 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
             ctx.close();
         }
     }
-
 
     private MsgResponse route(ChannelHandlerContext ctx, Object message, int protocolId, long userId) {
         try {
@@ -194,6 +221,7 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
         ByteBuf out = MsgUtil.buildClientMsg(ctx, msg.getCid(), errorCode, msg.getProtocolId(), Constants.NoZip, Constants.NoEncrypted, Constants.NoLength, null);
         ChannelFuture channelFuture = ctx.writeAndFlush(out);
         channelFuture.addListener(future -> {
+            safeRelease(ctx,msg);
             msg.recycle();
             if (!future.isSuccess()) {//通知客户端失败 日志 todo
                 System.err.println("Write and flush failed: " + future.cause());
@@ -201,6 +229,32 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
             }
         });
     }
+
+
+    private void safeRelease(ChannelHandlerContext ctx, ByteBuf resources) {
+        ctx.executor().execute(() -> {
+            if (resources != null) {
+                resources.release();
+            }
+        });
+    }
+
+    private void safeRelease(ChannelHandlerContext ctx, MsgResponse resources) {
+        ctx.executor().execute(() -> {
+            if (resources != null) {
+                resources.recycle();
+            }
+        });
+    }
+
+    private void safeRelease(ChannelHandlerContext ctx, ByteBufferServerMessage resources) {
+        ctx.executor().execute(() -> {
+            if (resources != null) {
+                resources.recycle();
+            }
+        });
+    }
+
 
 
 }
