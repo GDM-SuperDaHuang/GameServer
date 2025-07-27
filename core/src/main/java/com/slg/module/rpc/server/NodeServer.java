@@ -100,7 +100,7 @@ public class NodeServer {
                     group = "DEFAULT_GROUP";
                 }
 //                String host = configReader.getProperty("netty.server.host");
-                String host = "115.190.76.28";
+                String host = "115.190.79.27";
                 String serverName = configReader.getProperty("nacos.service.name");
                 String pbMin = configReader.getProperty("server.proto-id-min");
                 String pbMax = configReader.getProperty("server.proto-id-max");
