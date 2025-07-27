@@ -1,6 +1,5 @@
 package com.slg.module.rpc.server;
 
-import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.slg.module.connection.ServerConfigManager;
 import com.slg.module.message.Constants;
 import com.slg.module.rpc.msgDECode.MsgDecode;
@@ -10,15 +9,15 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-
 import java.net.InetSocketAddress;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class NodeServer {
@@ -27,9 +26,10 @@ public class NodeServer {
     public int getPort() {
         return port;
     }
+    private final Class<? extends ServerSocketChannel> channelClass;
 
     private final EventLoopGroup bossGroup;
-    private final EventLoopGroup workerGroup = new NioEventLoopGroup(6);
+    private final EventLoopGroup workerGroup;
     private final PbMessageHandler pbMessageHandler = new PbMessageHandler();
     private ChannelFuture serverChannelFuture;
     LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
@@ -51,8 +51,13 @@ public class NodeServer {
         //读取配置
         if (Epoll.isAvailable() && System.getProperty("os.name", "").toLowerCase().contains("linux")) {
             bossGroup = new EpollEventLoopGroup(1);
+            workerGroup = new EpollEventLoopGroup(); // 使用 Epoll
+            channelClass = EpollServerSocketChannel.class;
+
         } else {
             bossGroup = new NioEventLoopGroup(1);
+            workerGroup = new NioEventLoopGroup(); // 使用 NIO
+            channelClass = NioServerSocketChannel.class;
         }
 
     }
@@ -61,7 +66,7 @@ public class NodeServer {
         ServerBootstrap b = new ServerBootstrap();
         b.group(bossGroup, workerGroup)
                 // 指定Channel
-                .channel(NioServerSocketChannel.class)
+                .channel(channelClass)
 //                    .handler(new LoggingHandler())
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 //非延迟，直接发送
@@ -94,7 +99,8 @@ public class NodeServer {
                 if (group == null) {
                     group = "DEFAULT_GROUP";
                 }
-                String host = configReader.getProperty("netty.server.host");
+//                String host = configReader.getProperty("netty.server.host");
+                String host = "115.190.76.28";
                 String serverName = configReader.getProperty("nacos.service.name");
                 String pbMin = configReader.getProperty("server.proto-id-min");
                 String pbMax = configReader.getProperty("server.proto-id-max");
@@ -103,7 +109,8 @@ public class NodeServer {
                 metadata.put(Constants.ProtoMinId, pbMin);
                 metadata.put(Constants.ProtoMaxId, pbMax);
                 metadata.put(Constants.GroupId, groupId);
-                client.registerInstance(serverId, serverName, group, host, port, 1.0, metadata);
+//                client.registerInstance(serverId, serverName, group, host, port, 1.0, metadata);
+                client.registerInstance(serverId, serverName, group, host, 8001, 1.0, metadata);
                 ServerConfigManager.getInstance(serverName, group, null, serverId);
             } else {
                 System.err.println("!!!!! 节点服务器启动失败 !!!!!");
