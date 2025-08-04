@@ -3,6 +3,7 @@ package com.slg.module.rpc.server;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.Message;
 import com.slg.module.connection.DHKeyInfo;
+import com.slg.module.connection.UserInfoManage;
 import com.slg.module.message.*;
 import com.slg.module.register.HandlePbBeanManager;
 import com.slg.module.util.BeanTool;
@@ -33,8 +34,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @ChannelHandler.Sharable
 public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServerMessage> {
     HandlePbBeanManager handlePbBeanManager = HandlePbBeanManager.getInstance();
-
-
+    UserInfoManage userInfoManage = UserInfoManage.getInstance();
     // 虚拟线程池（每个用户一个专用虚拟线程）
     private final ConcurrentHashMap<Long, ExecutorService> userThreadMap = new ConcurrentHashMap<>();
 
@@ -48,10 +48,10 @@ public class PbMessageHandler extends SimpleChannelInboundHandler<ByteBufferServ
     protected void channelRead0(ChannelHandlerContext ctx, ByteBufferServerMessage msg) {
         long userId = msg.getUserId();
         int protocolId = msg.getProtocolId();
-        final EventLoop worker = ctx.channel().eventLoop();
+//        final EventLoop worker = ctx.channel().eventLoop();
+        ExecutorService userExecutor = userInfoManage.getVirtualThread(userId);
         // 获取或创建用户专属虚拟线程
-        ExecutorService userExecutor = userThreadMap.computeIfAbsent(userId, uid -> Executors.newSingleThreadExecutor(virtualThreadFactory));
-
+//        ExecutorService userExecutor = userThreadMap.computeIfAbsent(userId, uid -> Executors.newSingleThreadExecutor(virtualThreadFactory));
         // 提交任务到用户专属虚拟线程
         userExecutor.execute(() -> {
             ByteBuf zipBuf = null;//解压缩标志

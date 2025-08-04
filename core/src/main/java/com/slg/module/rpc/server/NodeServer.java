@@ -100,7 +100,9 @@ public class NodeServer {
                     group = "DEFAULT_GROUP";
                 }
 //                String host = configReader.getProperty("netty.server.host");
-                String host = "115.190.79.27";
+
+                String host = "115.190.76.28";//跳板机ip
+                int port0 = 8001; // 跳板机端口
                 String serverName = configReader.getProperty("nacos.service.name");
                 String pbMin = configReader.getProperty("server.proto-id-min");
                 String pbMax = configReader.getProperty("server.proto-id-max");
@@ -110,7 +112,7 @@ public class NodeServer {
                 metadata.put(Constants.ProtoMaxId, pbMax);
                 metadata.put(Constants.GroupId, groupId);
 //                client.registerInstance(serverId, serverName, group, host, port, 1.0, metadata);
-                client.registerInstance(serverId, serverName, group, host, 8001, 1.0, metadata);
+                client.registerInstance(serverId, serverName, group, host, port0, 1.0, metadata);
                 ServerConfigManager.getInstance(serverName, group, null, serverId);
             } else {
                 System.err.println("!!!!! 节点服务器启动失败 !!!!!");

@@ -1,6 +1,8 @@
 package com.slg.module;
 
 
+import com.slg.module.app.GameServerNodeApp;
+import com.slg.module.fightApp.app.FightApp;
 import com.slg.module.rpc.client.NettyClient;
 import com.slg.module.rpc.server.NodeServer;
 import org.springframework.boot.SpringApplication;
@@ -15,7 +17,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class EntranceApplication {
     private static NodeServer nodeServer;
     private static NettyClient nodeClient;
-
     public static void main(String[] args) {
         System.out.println("Node服务器开始启动.......");
 
@@ -27,6 +28,10 @@ public class EntranceApplication {
         nodeServer.start(nodeServer.getPort());
         // 3. 注册优雅关闭钩子
         registerShutdownHook(context);
+
+        //战斗服务器
+        //gameApp = new FightApp();
+        //gameApp.init();
     }
 
     private static void registerShutdownHook(ConfigurableApplicationContext context) {
